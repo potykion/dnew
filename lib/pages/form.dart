@@ -17,14 +17,36 @@ class DiaryRecordFormPage extends HookWidget {
     });
 
     return Scaffold(
-      appBar: AppBar(title: Text("Создание записи")),
-      body: Column(
-        children: [
-          Text(record.value.created.toString()),
-          TextFormField(
-            controller: tec,
-          )
-        ],
+      appBar: AppBar(
+        title: Text(
+          record.value.id != null ? "Редактирование записи" : "Создание записи",
+        ),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 4),
+              child: Text(
+                record.value.created.toString(),
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            Expanded(
+              child: TextFormField(
+                controller: tec,
+                keyboardType: TextInputType.multiline,
+                maxLines: null,
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.all(0),
+                  border: InputBorder.none,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.save),

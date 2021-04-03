@@ -27,11 +27,20 @@ class DiaryRecordCard extends StatelessWidget {
             context.read(diaryRecordControllerProvider).delete(record);
           }
         },
-        child: Column(
-          children: [
-            Text(record.created.toString()),
-            Text(record.text),
-          ],
+        child: Padding(
+          padding: EdgeInsets.all(8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                  padding: EdgeInsets.symmetric(vertical: 4),
+                  child: Text(
+                    record.created.toString(),
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  )),
+              Text(record.text),
+            ],
+          ),
         ),
       ),
     );
