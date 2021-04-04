@@ -38,3 +38,8 @@ var diaryRecordControllerProvider = StateNotifierProvider(
     ),
   ),
 );
+
+var diaryRecordListProvider = Provider(
+  (ref) => ref.watch(diaryRecordControllerProvider.state)
+    ..sort((r1, r2) => -r1.created.compareTo(r2.created)),
+);

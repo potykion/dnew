@@ -1,4 +1,4 @@
-import 'package:dnew/logic/diary/services.dart';
+import 'package:dnew/logic/diary/controllers.dart';
 import 'package:dnew/routes.dart';
 import 'package:dnew/widgets/record.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +8,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 class ListPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
-    var records = useProvider(diaryRecordControllerProvider.state);
+    var records = useProvider(diaryRecordListProvider);
 
     return Scaffold(
       appBar: AppBar(
