@@ -13,6 +13,7 @@ abstract class DiaryRecord implements _$DiaryRecord, WithId {
     String? id,
     required DateTime created,
     required String text,
+    @Default(false) bool favourite,
   }) = _DiaryRecord;
 
   factory DiaryRecord.fromJson(Map<String, dynamic> json) =>

@@ -32,12 +32,23 @@ class DiaryRecordCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                  padding: EdgeInsets.symmetric(vertical: 4),
-                  child: Text(
+              Row(
+                children: [
+                  Text(
                     record.created.toString(),
                     style: TextStyle(fontWeight: FontWeight.bold),
-                  )),
+                  ),
+                  Spacer(),
+                  GestureDetector(
+                    child: record.favourite
+                        ? Icon(Icons.favorite)
+                        : Icon(Icons.favorite_border),
+                    onTap: () => context
+                        .read(diaryRecordControllerProvider)
+                        .toggleFavourite(record),
+                  ),
+                ],
+              ),
               Text(record.text),
             ],
           ),

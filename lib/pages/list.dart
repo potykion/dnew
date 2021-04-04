@@ -9,17 +9,37 @@ class ListPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     var records = useProvider(diaryRecordListProvider);
+    var showFavouriteState = useProvider(showFavouritesProvider);
+    var showFavourites = showFavouriteState.state;
+
+    void toggleShowFavourites() {
+      showFavouriteState.state = !showFavouriteState.state;
+    }
 
     return Scaffold(
       appBar: AppBar(
         title: Text("dnew"),
+        actions: [
+          IconButton(
+            icon: showFavourites
+                ? Icon(Icons.favorite)
+                : Icon(Icons.favorite_border),
+            onPressed: toggleShowFavourites,
+          )
+        ],
       ),
-      body: ListView.builder(
-        itemBuilder: (context, index) => DiaryRecordCard(
-          record: records[index],
-        ),
-        itemCount: records.length,
-      ),
+      body: records.isEmpty
+          ? Center(
+              child: showFavourites
+                  ? Text("Нет избранных записей")
+                  : Text("Нет записей - самое время завести одну"),
+            )
+          : ListView(
+              children: [
+                ...records.map((r) => DiaryRecordCard(record: r)),
+                SizedBox(height: 80),
+              ],
+            ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () => Navigator.pushNamed(context, Routes.form),

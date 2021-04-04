@@ -25,6 +25,11 @@ class DiaryRecordController extends StateNotifier<List<DiaryRecord>> {
     state = [...state.where((r) => r.id != record.id), record];
   }
 
+  Future<void> toggleFavourite(DiaryRecord record) async {
+    record = record.copyWith(favourite: !record.favourite);
+    await update(record);
+  }
+
   Future<void> delete(DiaryRecord record) async {
     await repo.deleteById(record.id!);
     state = [...state.where((r) => r.id != record.id)];
@@ -39,7 +44,16 @@ var diaryRecordControllerProvider = StateNotifierProvider(
   ),
 );
 
+var showFavouritesProvider = StateProvider((ref) => false);
+
 var diaryRecordListProvider = Provider(
-  (ref) => ref.watch(diaryRecordControllerProvider.state)
-    ..sort((r1, r2) => -r1.created.compareTo(r2.created)),
+  (ref) => ref
+      .watch(diaryRecordControllerProvider.state)
+      .where(
+        (r) =>
+          (ref.watch(showFavouritesProvider).state && r.favourite) ||
+            !ref.watch(showFavouritesProvider).state,
+      )
+      .toList()
+        ..sort((r1, r2) => -r1.created.compareTo(r2.created)),
 );
