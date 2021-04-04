@@ -42,6 +42,7 @@ class DiaryRecordFormPage extends HookWidget {
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.all(0),
                   border: InputBorder.none,
+                  hintText: "Что произошло?",
                 ),
               ),
             ),
