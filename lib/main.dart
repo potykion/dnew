@@ -27,6 +27,7 @@ class MyApp extends HookWidget {
       themeMode: themeMode,
       initialRoute: Routes.loading,
       routes: routes,
+      debugShowCheckedModeBanner: false,
     );
   }
 }
