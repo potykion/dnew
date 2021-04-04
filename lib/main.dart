@@ -23,6 +23,16 @@ class MyApp extends HookWidget {
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         accentColor: Color(0xffBB86FC),
+        textSelectionTheme: TextSelectionThemeData(
+          cursorColor: Color(0xffBB86FC),
+          selectionColor: Color(0xffBB86FC),
+          selectionHandleColor: Color(0xffBB86FC),
+        ),
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            primary: Color(0xffBB86FC),
+          ),
+        ),
       ),
       themeMode: themeMode,
       initialRoute: Routes.loading,
