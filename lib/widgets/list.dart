@@ -32,7 +32,7 @@ class GroupedDiaryRecordList extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    var openedIndexState = useState<int?>(null);
+    var openedIndexState = useState<int?>(0);
 
     return ListView.builder(
       itemBuilder: (context, index) {
