@@ -10,6 +10,20 @@ void main() {
 }
 
 class MyApp extends HookWidget {
+  static const MaterialColor palette = MaterialColor(primaryColor, <int, Color>{
+    50: Color(0xFFF7F0FF),
+    100: Color(0xFFEBDBFE),
+    200: Color(0xFFDDC3FE),
+    300: Color(0xFFCFAAFD),
+    400: Color(0xFFC598FC),
+    500: Color(primaryColor),
+    600: Color(0xFFB57EFC),
+    700: Color(0xFFAC73FB),
+    800: Color(0xFFA469FB),
+    900: Color(0xFF9656FA),
+  });
+  static const int primaryColor = 0xFFBB86FC;
+
   @override
   Widget build(BuildContext context) {
     var themeMode = useProvider(themeModeStateProvider).state;
@@ -18,21 +32,12 @@ class MyApp extends HookWidget {
       title: 'dnew',
       theme: ThemeData(
         brightness: Brightness.light,
-        primarySwatch: Colors.deepPurple,
+        primarySwatch: palette,
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
-        accentColor: Color(0xffBB86FC),
-        textSelectionTheme: TextSelectionThemeData(
-          cursorColor: Color(0xffBB86FC),
-          selectionColor: Color(0xffBB86FC),
-          selectionHandleColor: Color(0xffBB86FC),
-        ),
-        textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(
-            primary: Color(0xffBB86FC),
-          ),
-        ),
+        primarySwatch: palette,
+        accentColor: Color(primaryColor),
       ),
       themeMode: themeMode,
       initialRoute: Routes.loading,
