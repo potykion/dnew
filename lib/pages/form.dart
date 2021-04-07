@@ -1,5 +1,6 @@
 import 'package:dnew/logic/diary/models.dart';
 import 'package:dnew/logic/diary/controllers.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -9,7 +10,7 @@ class DiaryRecordFormPage extends HookWidget {
   Widget build(BuildContext context) {
     var record = useState(
       ModalRoute.of(context)!.settings.arguments as DiaryRecord? ??
-          DiaryRecord.blank(),
+          DiaryRecord.blank(userId: FirebaseAuth.instance.currentUser!.uid),
     );
     var tec = useTextEditingController(text: record.value.text);
     tec.addListener(() {

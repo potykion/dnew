@@ -24,11 +24,13 @@ class _$DiaryRecordTearOff {
       {String? id,
       required DateTime created,
       required String text,
+      required String userId,
       bool favourite = false}) {
     return _DiaryRecord(
       id: id,
       created: created,
       text: text,
+      userId: userId,
       favourite: favourite,
     );
   }
@@ -46,6 +48,7 @@ mixin _$DiaryRecord {
   String? get id => throw _privateConstructorUsedError;
   DateTime get created => throw _privateConstructorUsedError;
   String get text => throw _privateConstructorUsedError;
+  String get userId => throw _privateConstructorUsedError;
   bool get favourite => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -59,7 +62,12 @@ abstract class $DiaryRecordCopyWith<$Res> {
   factory $DiaryRecordCopyWith(
           DiaryRecord value, $Res Function(DiaryRecord) then) =
       _$DiaryRecordCopyWithImpl<$Res>;
-  $Res call({String? id, DateTime created, String text, bool favourite});
+  $Res call(
+      {String? id,
+      DateTime created,
+      String text,
+      String userId,
+      bool favourite});
 }
 
 /// @nodoc
@@ -75,6 +83,7 @@ class _$DiaryRecordCopyWithImpl<$Res> implements $DiaryRecordCopyWith<$Res> {
     Object? id = freezed,
     Object? created = freezed,
     Object? text = freezed,
+    Object? userId = freezed,
     Object? favourite = freezed,
   }) {
     return _then(_value.copyWith(
@@ -89,6 +98,10 @@ class _$DiaryRecordCopyWithImpl<$Res> implements $DiaryRecordCopyWith<$Res> {
       text: text == freezed
           ? _value.text
           : text // ignore: cast_nullable_to_non_nullable
+              as String,
+      userId: userId == freezed
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
               as String,
       favourite: favourite == freezed
           ? _value.favourite
@@ -105,7 +118,12 @@ abstract class _$DiaryRecordCopyWith<$Res>
           _DiaryRecord value, $Res Function(_DiaryRecord) then) =
       __$DiaryRecordCopyWithImpl<$Res>;
   @override
-  $Res call({String? id, DateTime created, String text, bool favourite});
+  $Res call(
+      {String? id,
+      DateTime created,
+      String text,
+      String userId,
+      bool favourite});
 }
 
 /// @nodoc
@@ -123,6 +141,7 @@ class __$DiaryRecordCopyWithImpl<$Res> extends _$DiaryRecordCopyWithImpl<$Res>
     Object? id = freezed,
     Object? created = freezed,
     Object? text = freezed,
+    Object? userId = freezed,
     Object? favourite = freezed,
   }) {
     return _then(_DiaryRecord(
@@ -137,6 +156,10 @@ class __$DiaryRecordCopyWithImpl<$Res> extends _$DiaryRecordCopyWithImpl<$Res>
       text: text == freezed
           ? _value.text
           : text // ignore: cast_nullable_to_non_nullable
+              as String,
+      userId: userId == freezed
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
               as String,
       favourite: favourite == freezed
           ? _value.favourite
@@ -154,6 +177,7 @@ class _$_DiaryRecord extends _DiaryRecord {
       {this.id,
       required this.created,
       required this.text,
+      required this.userId,
       this.favourite = false})
       : super._();
 
@@ -166,13 +190,15 @@ class _$_DiaryRecord extends _DiaryRecord {
   final DateTime created;
   @override
   final String text;
+  @override
+  final String userId;
   @JsonKey(defaultValue: false)
   @override
   final bool favourite;
 
   @override
   String toString() {
-    return 'DiaryRecord(id: $id, created: $created, text: $text, favourite: $favourite)';
+    return 'DiaryRecord(id: $id, created: $created, text: $text, userId: $userId, favourite: $favourite)';
   }
 
   @override
@@ -186,6 +212,8 @@ class _$_DiaryRecord extends _DiaryRecord {
                     .equals(other.created, created)) &&
             (identical(other.text, text) ||
                 const DeepCollectionEquality().equals(other.text, text)) &&
+            (identical(other.userId, userId) ||
+                const DeepCollectionEquality().equals(other.userId, userId)) &&
             (identical(other.favourite, favourite) ||
                 const DeepCollectionEquality()
                     .equals(other.favourite, favourite)));
@@ -197,6 +225,7 @@ class _$_DiaryRecord extends _DiaryRecord {
       const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(created) ^
       const DeepCollectionEquality().hash(text) ^
+      const DeepCollectionEquality().hash(userId) ^
       const DeepCollectionEquality().hash(favourite);
 
   @JsonKey(ignore: true)
@@ -215,6 +244,7 @@ abstract class _DiaryRecord extends DiaryRecord {
       {String? id,
       required DateTime created,
       required String text,
+      required String userId,
       bool favourite}) = _$_DiaryRecord;
   const _DiaryRecord._() : super._();
 
@@ -227,6 +257,8 @@ abstract class _DiaryRecord extends DiaryRecord {
   DateTime get created => throw _privateConstructorUsedError;
   @override
   String get text => throw _privateConstructorUsedError;
+  @override
+  String get userId => throw _privateConstructorUsedError;
   @override
   bool get favourite => throw _privateConstructorUsedError;
   @override

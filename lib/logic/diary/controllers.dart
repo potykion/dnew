@@ -16,8 +16,8 @@ class DiaryRecordController extends StateNotifier<List<DiaryRecord>> {
     ];
   }
 
-  Future<void> list(String userId) async {
-    state = await repo.list();
+  Future<void> listByUserId(String userId) async {
+    state = await repo.listByUserId(userId);
   }
 
   Future<void> update(DiaryRecord record) async {
@@ -36,12 +36,12 @@ class DiaryRecordController extends StateNotifier<List<DiaryRecord>> {
   }
 }
 
-var diaryRecordControllerProvider = StateNotifierProvider(
-  (_) => DiaryRecordController(
-    FirebaseDiaryRecordRepo(
+var diaryRepoProvider = Provider((_) => FirebaseDiaryRecordRepo(
       FirebaseFirestore.instance.collection("FirebaseDiaryRecordRepo"),
-    ),
-  ),
+    ));
+
+var diaryRecordControllerProvider = StateNotifierProvider(
+  (ref) => DiaryRecordController(ref.watch(diaryRepoProvider)),
 );
 
 var showFavouritesProvider = StateProvider((ref) => false);

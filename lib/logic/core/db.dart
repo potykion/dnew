@@ -42,6 +42,9 @@ abstract class FirebaseRepo<T extends WithId> {
       entityFromFirebase((await collectionReference.doc(id).get()));
 
   /// Получает все сущности из фаерстор
-  Future<List<T>> list() async =>
-      (await collectionReference.get()).docs.map(entityFromFirebase).toList();
+  Future<List<T>> listByUserId(String userId) async =>
+      (await collectionReference.where("userId", isEqualTo: userId).get())
+          .docs
+          .map(entityFromFirebase)
+          .toList();
 }

@@ -5,7 +5,6 @@ import 'package:dnew/routes.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LoadingPage extends HookWidget {
   @override
@@ -20,7 +19,9 @@ class LoadingPage extends HookWidget {
           Navigator.pushReplacementNamed(context, Routes.auth);
         }
 
-        await context.read(diaryRecordControllerProvider).list(user!.uid);
+        await context
+            .read(diaryRecordControllerProvider)
+            .listByUserId(user!.uid);
 
         Navigator.pushReplacementNamed(context, Routes.list);
       });
