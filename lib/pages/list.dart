@@ -1,7 +1,9 @@
 import 'package:dnew/logic/diary/controllers.dart';
+import 'package:dnew/logic/settings/controllers.dart';
+import 'package:dnew/logic/settings/models.dart';
 import 'package:dnew/routes.dart';
 import 'package:dnew/widgets/bottom.dart';
-import 'package:dnew/widgets/record.dart';
+import 'package:dnew/widgets/list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -10,6 +12,8 @@ class ListPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     var records = useProvider(diaryRecordListProvider);
+    var dailyRecords = useProvider(dailyRecordsProvider);
+    var displayMode = useProvider(displayModeControllerProvider.state);
 
     var showFavouriteState = useProvider(showFavouritesProvider);
     var showFavourites = showFavouriteState.state;
@@ -35,12 +39,11 @@ class ListPage extends HookWidget {
                   ? Text("Нет избранных записей")
                   : Text("Нет записей - самое время завести одну"),
             )
-          : ListView(
-              children: [
-                ...records.map((r) => DiaryRecordCard(record: r)),
-                // SizedBox(height: 80),
-              ],
-            ),
+          : displayMode == DiaryRecordDisplayMode.list
+              ? DiaryRecordList(records: records)
+              : displayMode == DiaryRecordDisplayMode.day
+                  ? DayDiaryRecordList(dailyRecords: dailyRecords)
+                  : null,
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () => Navigator.pushNamed(context, Routes.form),

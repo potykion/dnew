@@ -1,16 +1,20 @@
 import 'package:dnew/logic/diary/models.dart';
 import 'package:dnew/logic/diary/controllers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../routes.dart';
 
 class DiaryRecordCard extends StatelessWidget {
   final DiaryRecord record;
+  final bool showDate;
 
   const DiaryRecordCard({
     Key? key,
     required this.record,
+    this.showDate = true,
   }) : super(key: key);
 
   @override
@@ -35,7 +39,8 @@ class DiaryRecordCard extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    record.created.toString(),
+                    (showDate ? DateFormat.yMd().add_Hms() : DateFormat.Hms())
+                        .format(record.created),
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Spacer(),
@@ -74,4 +79,52 @@ class DiaryRecordCard extends StatelessWidget {
           ],
         ),
       );
+}
+
+class DateDiaryRecordsCollapse extends HookWidget {
+  final DateTime date;
+  final List<DiaryRecord> dateRecords;
+  final bool opened;
+  final Function(bool) onOpenedChange;
+
+  const DateDiaryRecordsCollapse({
+    Key? key,
+    required this.date,
+    required this.dateRecords,
+    required this.opened,
+    required this.onOpenedChange,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        ListTile(
+          dense: true,
+          title: Text(DateFormat.yMd().format(date)),
+          trailing: Icon(
+              opened ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down),
+          onTap: () => onOpenedChange(!opened),
+        ),
+        if (opened)
+          // TODO try FractionallySizedBox
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: 500,
+            ),
+            child: ListView(
+              shrinkWrap: true,
+              children: dateRecords
+                  .map(
+                    (r) => DiaryRecordCard(
+                      record: r,
+                      showDate: false,
+                    ),
+                  )
+                  .toList(),
+            ),
+          )
+      ],
+    );
+  }
 }

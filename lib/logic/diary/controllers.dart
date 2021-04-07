@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:collection/collection.dart';
 import 'package:dnew/logic/diary/db.dart';
+import 'package:dnew/logic/core/utils/datetime.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'models.dart';
@@ -57,3 +59,9 @@ var diaryRecordListProvider = Provider(
       .toList()
         ..sort((r1, r2) => -r1.created.compareTo(r2.created)),
 );
+var dailyRecordsProvider = Provider((ref) {
+  return groupBy<DiaryRecord, DateTime>(
+    ref.watch(diaryRecordListProvider),
+    (r) => r.created.date(),
+  );
+});
