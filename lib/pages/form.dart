@@ -39,6 +39,7 @@ class DiaryRecordFormPage extends HookWidget {
               child: TextFormField(
                 controller: tec,
                 keyboardType: TextInputType.multiline,
+                textCapitalization: TextCapitalization.sentences,
                 maxLines: null,
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.all(0),
