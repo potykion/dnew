@@ -1,6 +1,7 @@
 import 'package:dnew/logic/core/controllers.dart';
 import 'package:dnew/logic/diary/controllers.dart';
 import 'package:dnew/routes.dart';
+import 'package:dnew/widgets/bottom.dart';
 import 'package:dnew/widgets/record.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -54,13 +55,15 @@ class ListPage extends HookWidget {
           : ListView(
               children: [
                 ...records.map((r) => DiaryRecordCard(record: r)),
-                SizedBox(height: 80),
+                // SizedBox(height: 80),
               ],
             ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () => Navigator.pushNamed(context, Routes.form),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      bottomNavigationBar: MyBottomNav(),
     );
   }
 }

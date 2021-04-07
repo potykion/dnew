@@ -2,6 +2,7 @@ import 'package:dnew/pages/auth.dart';
 import 'package:dnew/pages/form.dart';
 import 'package:dnew/pages/list.dart';
 import 'package:dnew/pages/loading.dart';
+import 'package:dnew/pages/settings.dart';
 import 'package:flutter/material.dart';
 
 // ignore: avoid_classes_with_only_static_members
@@ -10,6 +11,7 @@ class Routes {
   static String list = "/list";
   static String auth = "/auth";
   static String form = "/form";
+  static String settings = "/settings";
 }
 
 Map<String, WidgetBuilder> routes = {
@@ -17,4 +19,5 @@ Map<String, WidgetBuilder> routes = {
   Routes.list: (_) => ListPage(),
   Routes.auth: (_) => AuthPage(),
   Routes.form: (_) => DiaryRecordFormPage(),
+  Routes.settings: (_) => SettingsPage(),
 };
