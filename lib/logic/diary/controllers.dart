@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:collection/collection.dart';
 import 'package:dnew/logic/diary/db.dart';
-import 'package:dnew/logic/core/utils/datetime.dart';
+import 'package:dnew/logic/core/utils/dt.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import 'models.dart';
 
@@ -60,8 +61,22 @@ var diaryRecordListProvider = Provider(
         ..sort((r1, r2) => -r1.created.compareTo(r2.created)),
 );
 var dailyRecordsProvider = Provider((ref) {
-  return groupBy<DiaryRecord, DateTime>(
+  return groupBy<DiaryRecord, String>(
     ref.watch(diaryRecordListProvider),
-    (r) => r.created.date(),
+    (r) {
+      var recordCreatedDate = r.created.date();
+      return DateFormat.yMd().format(recordCreatedDate);
+    },
+  );
+});
+var weeklyRecordsProvider = Provider((ref) {
+  return groupBy<DiaryRecord, String>(
+    ref.watch(diaryRecordListProvider),
+    (r) {
+      var recordWeek = DateRange.withinWeek(r.created);
+      var fromDateStr = DateFormat.yMd().format(recordWeek.from);
+      var toDateStr = DateFormat.yMd().format(recordWeek.to);
+      return "$fromDateStr - $toDateStr";
+    },
   );
 });

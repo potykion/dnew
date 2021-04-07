@@ -2,6 +2,7 @@ import 'package:dnew/logic/diary/models.dart';
 import 'package:dnew/widgets/record.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:intl/intl.dart';
 
 class DiaryRecordList extends StatelessWidget {
   final List<DiaryRecord> records;
@@ -19,12 +20,14 @@ class DiaryRecordList extends StatelessWidget {
   }
 }
 
-class DayDiaryRecordList extends HookWidget {
-  final Map<DateTime, List<DiaryRecord>> dailyRecords;
+class GroupedDiaryRecordList extends HookWidget {
+  final Map<String, List<DiaryRecord>> groupedRecords;
+  final bool showDate;
 
-  const DayDiaryRecordList({
+  const GroupedDiaryRecordList({
     Key? key,
-    required this.dailyRecords,
+    required this.groupedRecords,
+    this.showDate = true,
   }) : super(key: key);
 
   @override
@@ -33,22 +36,19 @@ class DayDiaryRecordList extends HookWidget {
 
     return ListView.builder(
       itemBuilder: (context, index) {
-        var dayRecords = [...dailyRecords.entries][index];
+        var dayRecords = [...groupedRecords.entries][index];
 
-        return DateDiaryRecordsCollapse(
-          date: dayRecords.key,
+        return DiaryRecordsCollapse(
+          label: dayRecords.key,
           dateRecords: dayRecords.value,
           opened: openedIndexState.value == index,
           onOpenedChange: (opened) {
-            if (!opened) {
-              openedIndexState.value = null;
-            } else {
-              openedIndexState.value = index;
-            }
+            openedIndexState.value = opened ? index : null;
           },
+          showDate: showDate,
         );
       },
-      itemCount: dailyRecords.length,
+      itemCount: groupedRecords.length,
     );
   }
 }

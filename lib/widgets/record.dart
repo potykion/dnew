@@ -81,17 +81,19 @@ class DiaryRecordCard extends StatelessWidget {
       );
 }
 
-class DateDiaryRecordsCollapse extends HookWidget {
-  final DateTime date;
+class DiaryRecordsCollapse extends HookWidget {
+  final String label;
   final List<DiaryRecord> dateRecords;
   final bool opened;
+  final bool showDate;
   final Function(bool) onOpenedChange;
 
-  const DateDiaryRecordsCollapse({
+  const DiaryRecordsCollapse({
     Key? key,
-    required this.date,
+    required this.label,
     required this.dateRecords,
     required this.opened,
+    this.showDate = true,
     required this.onOpenedChange,
   }) : super(key: key);
 
@@ -101,7 +103,7 @@ class DateDiaryRecordsCollapse extends HookWidget {
       children: [
         ListTile(
           dense: true,
-          title: Text(DateFormat.yMd().format(date)),
+          title: Text(label),
           trailing: Icon(
               opened ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down),
           onTap: () => onOpenedChange(!opened),
@@ -122,7 +124,7 @@ class DateDiaryRecordsCollapse extends HookWidget {
                   .map(
                     (r) => DiaryRecordCard(
                       record: r,
-                      showDate: false,
+                      showDate: showDate,
                     ),
                   )
                   .toList(),

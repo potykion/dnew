@@ -13,6 +13,8 @@ class ListPage extends HookWidget {
   Widget build(BuildContext context) {
     var records = useProvider(diaryRecordListProvider);
     var dailyRecords = useProvider(dailyRecordsProvider);
+    var weeklyRecords = useProvider(weeklyRecordsProvider);
+
     var displayMode = useProvider(displayModeControllerProvider.state);
 
     var showFavouriteState = useProvider(showFavouritesProvider);
@@ -42,8 +44,13 @@ class ListPage extends HookWidget {
           : displayMode == DiaryRecordDisplayMode.list
               ? DiaryRecordList(records: records)
               : displayMode == DiaryRecordDisplayMode.day
-                  ? DayDiaryRecordList(dailyRecords: dailyRecords)
-                  : null,
+                  ? GroupedDiaryRecordList(
+                      groupedRecords: dailyRecords,
+                      showDate: false,
+                    )
+                  : displayMode == DiaryRecordDisplayMode.week
+                      ? GroupedDiaryRecordList(groupedRecords: weeklyRecords)
+                      : null,
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () => Navigator.pushNamed(context, Routes.form),
