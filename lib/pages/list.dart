@@ -19,14 +19,6 @@ class ListPage extends HookWidget {
       showFavouriteState.state = !showFavouriteState.state;
     }
 
-    var themeModeState = useProvider(themeModeStateProvider);
-    var isDarkMode = themeModeState.state == ThemeMode.system
-        ? MediaQuery.of(context).platformBrightness == Brightness.dark
-        : themeModeState.state == ThemeMode.dark;
-    void toggleThemeMode() async {
-      themeModeState.state = isDarkMode ? ThemeMode.light : ThemeMode.dark;
-      (await SharedPreferences.getInstance()).setBool("isDark", !isDarkMode);
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -38,12 +30,6 @@ class ListPage extends HookWidget {
                 : Icon(Icons.favorite_border),
             onPressed: toggleShowFavourites,
           ),
-          IconButton(
-            icon: isDarkMode
-                ? Icon(Icons.nightlight_round)
-                : Icon(Icons.wb_sunny),
-            onPressed: toggleThemeMode,
-          )
         ].reversed.toList(),
       ),
       body: records.isEmpty

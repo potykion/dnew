@@ -38,6 +38,7 @@ class MyApp extends HookWidget {
         brightness: Brightness.dark,
         primarySwatch: palette,
         accentColor: Color(primaryColor),
+        toggleableActiveColor: Color(primaryColor),
       ),
       themeMode: themeMode,
       initialRoute: Routes.loading,
