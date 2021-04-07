@@ -16,7 +16,7 @@ class DiaryRecordController extends StateNotifier<List<DiaryRecord>> {
     ];
   }
 
-  Future<void> list() async {
+  Future<void> list(String userId) async {
     state = await repo.list();
   }
 
@@ -51,7 +51,7 @@ var diaryRecordListProvider = Provider(
       .watch(diaryRecordControllerProvider.state)
       .where(
         (r) =>
-          (ref.watch(showFavouritesProvider).state && r.favourite) ||
+            (ref.watch(showFavouritesProvider).state && r.favourite) ||
             !ref.watch(showFavouritesProvider).state,
       )
       .toList()

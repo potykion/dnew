@@ -13,9 +13,14 @@ class LoadingPage extends HookWidget {
     useEffect(() {
       WidgetsBinding.instance!.addPostFrameCallback((_) async {
         await Firebase.initializeApp();
-        await FirebaseAuth.instance.signInAnonymously();
 
-        await context.read(diaryRecordControllerProvider).list();
+        var user = FirebaseAuth.instance.currentUser;
+        if (user?.isAnonymous ?? true) {
+          await FirebaseAuth.instance.signOut();
+          Navigator.pushReplacementNamed(context, Routes.auth);
+        }
+
+        await context.read(diaryRecordControllerProvider).list(user!.uid);
 
         Navigator.pushReplacementNamed(context, Routes.list);
       });

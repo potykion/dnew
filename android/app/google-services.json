@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "147399885899-cs85uetf15b5kolfjgn57nh5bc58lcak.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "dev.palka.dnew",
+            "certificate_hash": "634a9ece343b47955667f8793ea6b254a5a9b5f9"
+          }
+        },
+        {
           "client_id": "147399885899-b4jvvpjjc127chre72hqlkjqj7nmm7ln.apps.googleusercontent.com",
           "client_type": 3
         }
