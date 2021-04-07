@@ -14,15 +14,9 @@ class AuthPage extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         children: [
           Text("Надо бы войти"),
-          ElevatedButton(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image.asset('assets/g.png'),
-                Padding(padding: EdgeInsets.only(left: 6)),
-                Text("Войти")
-              ],
-            ),
+          ElevatedButton.icon(
+            label: Text("Войти"),
+            icon: Image.asset('assets/g.png'),
             onPressed: () async {
               await signInByGoogle();
               Navigator.pushReplacementNamed(context, Routes.loading);

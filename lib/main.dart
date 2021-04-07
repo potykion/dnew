@@ -39,6 +39,7 @@ class MyApp extends HookWidget {
         primarySwatch: palette,
         accentColor: Color(primaryColor),
         toggleableActiveColor: Color(primaryColor),
+        textTheme: TextTheme(button: TextStyle(color: Color(primaryColor))),
       ),
       themeMode: themeMode,
       initialRoute: Routes.loading,

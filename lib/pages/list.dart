@@ -1,4 +1,3 @@
-import 'package:dnew/logic/core/controllers.dart';
 import 'package:dnew/logic/diary/controllers.dart';
 import 'package:dnew/routes.dart';
 import 'package:dnew/widgets/bottom.dart';
@@ -6,7 +5,6 @@ import 'package:dnew/widgets/record.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ListPage extends HookWidget {
   @override
@@ -18,7 +16,6 @@ class ListPage extends HookWidget {
     void toggleShowFavourites() {
       showFavouriteState.state = !showFavouriteState.state;
     }
-
 
     return Scaffold(
       appBar: AppBar(
