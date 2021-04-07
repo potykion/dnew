@@ -107,10 +107,14 @@ class DateDiaryRecordsCollapse extends HookWidget {
           onTap: () => onOpenedChange(!opened),
         ),
         if (opened)
-          // TODO try FractionallySizedBox
           ConstrainedBox(
             constraints: BoxConstraints(
-              maxHeight: 500,
+              maxHeight: MediaQuery.of(context).size.height -
+                  120 - // AppBar height
+                  50 - // ListTile height
+                  50 - // ListTile height
+                  60 // BottomNav height
+              ,
             ),
             child: ListView(
               shrinkWrap: true,

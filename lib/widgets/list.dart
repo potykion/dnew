@@ -33,7 +33,7 @@ class DayDiaryRecordList extends HookWidget {
 
     return ListView.builder(
       itemBuilder: (context, index) {
-        var dayRecords = dailyRecords.entries.toList()[index];
+        var dayRecords = [...dailyRecords.entries][index];
 
         return DateDiaryRecordsCollapse(
           date: dayRecords.key,
