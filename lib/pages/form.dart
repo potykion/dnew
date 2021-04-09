@@ -56,11 +56,11 @@ class DiaryRecordFormPage extends HookWidget {
         onPressed: () async {
           if (record.value.id != null) {
             await context
-                .read(diaryRecordControllerProvider)
+                .read(diaryRecordControllerProvider.notifier)
                 .update(record.value);
           } else {
             await context
-                .read(diaryRecordControllerProvider)
+                .read(diaryRecordControllerProvider.notifier)
                 .create(record.value);
           }
 

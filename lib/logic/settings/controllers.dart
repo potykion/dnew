@@ -24,7 +24,7 @@ class DisplayModeController extends StateNotifier<DiaryRecordDisplayMode> {
   }
 }
 
-var displayModeControllerProvider = StateNotifierProvider((ref) {
+var displayModeControllerProvider = StateNotifierProvider<DisplayModeController, DiaryRecordDisplayMode>((ref) {
   return DisplayModeController(ref.watch(savedDisplayModeProvider).maybeWhen(
         data: (displayMode) => displayMode == null
             ? DiaryRecordDisplayMode.list
@@ -34,7 +34,7 @@ var displayModeControllerProvider = StateNotifierProvider((ref) {
 });
 
 var displayModeStrProvider = Provider<String>((ref) {
-  var displayMode = ref.watch(displayModeControllerProvider.state);
+  var displayMode = ref.watch(displayModeControllerProvider);
   if (displayMode == DiaryRecordDisplayMode.list) return "Списком";
   if (displayMode == DiaryRecordDisplayMode.day) return "По дням";
   if (displayMode == DiaryRecordDisplayMode.week) return "По неделям";

@@ -43,7 +43,7 @@ var diaryRepoProvider = Provider((_) => FirebaseDiaryRecordRepo(
       FirebaseFirestore.instance.collection("FirebaseDiaryRecordRepo"),
     ));
 
-var diaryRecordControllerProvider = StateNotifierProvider(
+var diaryRecordControllerProvider = StateNotifierProvider<DiaryRecordController, List<DiaryRecord>>(
   (ref) => DiaryRecordController(ref.watch(diaryRepoProvider)),
 );
 
@@ -51,7 +51,7 @@ var showFavouritesProvider = StateProvider((ref) => false);
 
 var diaryRecordListProvider = Provider(
   (ref) => ref
-      .watch(diaryRecordControllerProvider.state)
+      .watch(diaryRecordControllerProvider)
       .where(
         (r) =>
             (ref.watch(showFavouritesProvider).state && r.favourite) ||

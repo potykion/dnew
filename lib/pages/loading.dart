@@ -25,7 +25,7 @@ class LoadingPage extends HookWidget {
         }
 
         await context
-            .read(diaryRecordControllerProvider)
+            .read(diaryRecordControllerProvider.notifier)
             .listByUserId(user!.uid);
 
         Navigator.pushReplacementNamed(context, Routes.list);

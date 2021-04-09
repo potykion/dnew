@@ -15,7 +15,7 @@ class ListPage extends HookWidget {
     var dailyRecords = useProvider(dailyRecordsProvider);
     var weeklyRecords = useProvider(weeklyRecordsProvider);
 
-    var displayMode = useProvider(displayModeControllerProvider.state);
+    var displayMode = useProvider(displayModeControllerProvider);
 
     var showFavouriteState = useProvider(showFavouritesProvider);
     var showFavourites = showFavouriteState.state;

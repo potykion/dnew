@@ -31,7 +31,7 @@ class SettingsPage extends HookWidget {
               style: Theme.of(context).textTheme.button,
             ),
             onTap: () => context
-                .read(displayModeControllerProvider)
+                .read(displayModeControllerProvider.notifier)
                 .setNextDisplayMode(),
           ),
           SwitchListTile(

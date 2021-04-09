@@ -28,7 +28,7 @@ class DiaryRecordCard extends StatelessWidget {
         ),
         onLongPress: () async {
           if (await _showConfirmDialog(context) ?? false) {
-            context.read(diaryRecordControllerProvider).delete(record);
+            context.read(diaryRecordControllerProvider.notifier).delete(record);
           }
         },
         child: Padding(
@@ -49,7 +49,7 @@ class DiaryRecordCard extends StatelessWidget {
                         ? Icon(Icons.favorite)
                         : Icon(Icons.favorite_border),
                     onTap: () => context
-                        .read(diaryRecordControllerProvider)
+                        .read(diaryRecordControllerProvider.notifier)
                         .toggleFavourite(record),
                   ),
                 ],
