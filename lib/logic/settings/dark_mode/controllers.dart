@@ -8,9 +8,8 @@ class ThemeModeController extends StateNotifier<ThemeMode> {
     SharedPreferences.getInstance().then(
       (sp) {
         var isDark = sp.getBool("isDark");
-        if (isDark != null) {
-          state = isDark ? ThemeMode.dark : ThemeMode.light;
-        }
+        if (isDark == null) return;
+        state = isDark ? ThemeMode.dark : ThemeMode.light;
       },
     );
   }

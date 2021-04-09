@@ -3,12 +3,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'models.dart';
 
-var savedDisplayModeProvider = FutureProvider<int?>((_) async {
-  return (await SharedPreferences.getInstance()).getInt("displayMode");
-});
-
 class DisplayModeController extends StateNotifier<DiaryRecordDisplayMode> {
-  DisplayModeController(DiaryRecordDisplayMode state) : super(state);
+  DisplayModeController() : super(DiaryRecordDisplayMode.list) {
+    SharedPreferences.getInstance().then((sp) {
+      var displayMode = sp.getInt("displayMode");
+      if (displayMode == null) return;
+      state = DiaryRecordDisplayMode.values[displayMode];
+    });
+  }
 
   Future<void> setNextDisplayMode() async {
     late DiaryRecordDisplayMode nextDisplayMode;
@@ -25,14 +27,9 @@ class DisplayModeController extends StateNotifier<DiaryRecordDisplayMode> {
   }
 }
 
-var displayModeControllerProvider = StateNotifierProvider<DisplayModeController, DiaryRecordDisplayMode>((ref) {
-  return DisplayModeController(ref.watch(savedDisplayModeProvider).maybeWhen(
-        data: (displayMode) => displayMode == null
-            ? DiaryRecordDisplayMode.list
-            : DiaryRecordDisplayMode.values[displayMode],
-        orElse: () => DiaryRecordDisplayMode.list,
-      ));
-});
+var displayModeControllerProvider =
+    StateNotifierProvider<DisplayModeController, DiaryRecordDisplayMode>(
+        (ref) => DisplayModeController());
 
 var displayModeStrProvider = Provider<String>((ref) {
   var displayMode = ref.watch(displayModeControllerProvider);
