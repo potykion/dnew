@@ -21,7 +21,20 @@ class DiaryRecordFormPage extends HookWidget {
 
     var tagsTec = useTextEditingController(text: record.value.tags.join(" "));
     tagsTec.addListener(() {
-      record.value = record.value.copyWith(tags: tagsTec.text.split(" "));
+      if (tagsTec.text.endsWith("#")) {
+        //  todo show overlay
+      }
+
+      // tagsTec.text.length >= 2 = #s
+      if (tagsTec.text.length >= 2) {
+        // #sam1 #sam2#sam3 sam > [#sam1, #sam2, #sam3]
+        record.value = record.value.copyWith(
+          tags: RegExp(r"(#\w+)")
+              .allMatches(tagsTec.text)
+              .map((m) => m.group(0)!)
+              .toList(),
+        );
+      }
     });
 
     return Scaffold(
