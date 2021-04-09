@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'logic/core/controllers.dart';
+import 'logic/settings/dark_mode/controllers.dart';
 
 void main() {
   runApp(ProviderScope(child: MyApp()));
@@ -26,7 +26,7 @@ class MyApp extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    var themeMode = useProvider(themeModeStateProvider).state;
+    var themeMode = useProvider(themeModeControllerProvider);
 
     return MaterialApp(
       title: 'dnew',
