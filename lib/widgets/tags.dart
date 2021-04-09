@@ -30,7 +30,9 @@ class TagsInput extends HookWidget {
       onSuggestionSelected: (tag) {
         var currentTags = parseTags(tec.text).toList();
         tec.text =
-            [...currentTags.sublist(0, currentTags.length), tag].join(" ");
+            [...currentTags.sublist(0, currentTags.length), "$tag "].join(" ");
+        tec.selection =
+            TextSelection.fromPosition(TextPosition(offset: tec.text.length));
       },
       itemBuilder: (_, itemData) => ListTile(
         title: Text(itemData),
@@ -50,6 +52,7 @@ class TagsInput extends HookWidget {
       },
       hideSuggestionsOnKeyboardHide: true,
       hideOnEmpty: true,
+      keepSuggestionsOnSuggestionSelected: true,
     );
   }
 }
