@@ -33,6 +33,10 @@ class MyApp extends HookWidget {
       theme: ThemeData(
         brightness: Brightness.light,
         primarySwatch: palette,
+        inputDecorationTheme: InputDecorationTheme(
+          contentPadding: EdgeInsets.all(0),
+          border: InputBorder.none,
+        ),
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
@@ -40,6 +44,10 @@ class MyApp extends HookWidget {
         accentColor: Color(primaryColor),
         toggleableActiveColor: Color(primaryColor),
         textTheme: TextTheme(button: TextStyle(color: Color(primaryColor))),
+        inputDecorationTheme: InputDecorationTheme(
+          contentPadding: EdgeInsets.all(0),
+          border: InputBorder.none,
+        ),
       ),
       themeMode: themeMode,
       initialRoute: Routes.loading,

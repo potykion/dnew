@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart';
 
 class DiaryRecordFormPage extends HookWidget {
   @override
@@ -12,9 +13,15 @@ class DiaryRecordFormPage extends HookWidget {
       ModalRoute.of(context)!.settings.arguments as DiaryRecord? ??
           DiaryRecord.blank(userId: FirebaseAuth.instance.currentUser!.uid),
     );
-    var tec = useTextEditingController(text: record.value.text);
-    tec.addListener(() {
-      record.value = record.value.copyWith(text: tec.text);
+
+    var textTec = useTextEditingController(text: record.value.text);
+    textTec.addListener(() {
+      record.value = record.value.copyWith(text: textTec.text);
+    });
+
+    var tagsTec = useTextEditingController(text: record.value.tags.join(" "));
+    tagsTec.addListener(() {
+      record.value = record.value.copyWith(tags: tagsTec.text.split(" "));
     });
 
     return Scaffold(
@@ -31,21 +38,27 @@ class DiaryRecordFormPage extends HookWidget {
             Padding(
               padding: EdgeInsets.symmetric(vertical: 4),
               child: Text(
-                record.value.created.toString(),
+                DateFormat.yMd().add_Hms().format(record.value.created),
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
+            Divider(),
             Expanded(
               child: TextFormField(
-                controller: tec,
+                controller: textTec,
                 keyboardType: TextInputType.multiline,
                 textCapitalization: TextCapitalization.sentences,
                 maxLines: null,
                 decoration: InputDecoration(
-                  contentPadding: EdgeInsets.all(0),
-                  border: InputBorder.none,
                   hintText: "Что произошло?",
                 ),
+              ),
+            ),
+            Divider(),
+            TextFormField(
+              controller: tagsTec,
+              decoration: InputDecoration(
+                hintText: "Теги, например #работа",
               ),
             ),
           ],

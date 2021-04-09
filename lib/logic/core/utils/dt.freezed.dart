@@ -61,8 +61,14 @@ class _$DateRangeCopyWithImpl<$Res> implements $DateRangeCopyWith<$Res> {
     Object? to = freezed,
   }) {
     return _then(_value.copyWith(
-      from: from == freezed ? _value.from : from as DateTime,
-      to: to == freezed ? _value.to : to as DateTime,
+      from: from == freezed
+          ? _value.from
+          : from // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      to: to == freezed
+          ? _value.to
+          : to // ignore: cast_nullable_to_non_nullable
+              as DateTime,
     ));
   }
 }
@@ -91,8 +97,14 @@ class __$DateRangeCopyWithImpl<$Res> extends _$DateRangeCopyWithImpl<$Res>
     Object? to = freezed,
   }) {
     return _then(_DateRange(
-      from == freezed ? _value.from : from as DateTime,
-      to == freezed ? _value.to : to as DateTime,
+      from == freezed
+          ? _value.from
+          : from // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      to == freezed
+          ? _value.to
+          : to // ignore: cast_nullable_to_non_nullable
+              as DateTime,
     ));
   }
 }
@@ -138,8 +150,8 @@ class _$_DateRange extends _DateRange {
 }
 
 abstract class _DateRange extends DateRange {
-  _DateRange._() : super._();
   factory _DateRange(DateTime from, DateTime to) = _$_DateRange;
+  _DateRange._() : super._();
 
   @override
 

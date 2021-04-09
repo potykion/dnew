@@ -1,5 +1,6 @@
 import 'package:dnew/logic/diary/models.dart';
 import 'package:dnew/logic/diary/controllers.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -7,7 +8,7 @@ import 'package:intl/intl.dart';
 
 import '../routes.dart';
 
-class DiaryRecordCard extends StatelessWidget {
+class DiaryRecordCard extends HookWidget {
   final DiaryRecord record;
   final bool showDate;
 
@@ -54,7 +55,25 @@ class DiaryRecordCard extends StatelessWidget {
                   ),
                 ],
               ),
-              Text(record.text),
+              RichText(
+                text: TextSpan(children: [
+                  TextSpan(text: record.text),
+                  if (record.tags.isNotEmpty) ...[
+                    TextSpan(text: "\n\n"),
+                    for (var tag in record.tags)
+                      TextSpan(
+                        text: tag,
+                        style: Theme.of(context).textTheme.button,
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => Navigator.pushNamed(
+                                context,
+                                Routes.list,
+                                arguments: tag,
+                              ),
+                      )
+                  ]
+                ]),
+              ),
             ],
           ),
         ),

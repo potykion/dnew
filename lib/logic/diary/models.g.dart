@@ -13,6 +13,8 @@ _$_DiaryRecord _$_$_DiaryRecordFromJson(Map json) {
     text: json['text'] as String,
     userId: json['userId'] as String,
     favourite: json['favourite'] as bool? ?? false,
+    tags: (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+        [],
   );
 }
 
@@ -23,4 +25,5 @@ Map<String, dynamic> _$_$_DiaryRecordToJson(_$_DiaryRecord instance) =>
       'text': instance.text,
       'userId': instance.userId,
       'favourite': instance.favourite,
+      'tags': instance.tags,
     };

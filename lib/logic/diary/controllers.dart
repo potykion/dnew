@@ -43,35 +43,40 @@ var diaryRepoProvider = Provider((_) => FirebaseDiaryRecordRepo(
       FirebaseFirestore.instance.collection("FirebaseDiaryRecordRepo"),
     ));
 
-var diaryRecordControllerProvider = StateNotifierProvider<DiaryRecordController, List<DiaryRecord>>(
+var diaryRecordControllerProvider =
+    StateNotifierProvider<DiaryRecordController, List<DiaryRecord>>(
   (ref) => DiaryRecordController(ref.watch(diaryRepoProvider)),
 );
 
 var showFavouritesProvider = StateProvider((ref) => false);
 
-var diaryRecordListProvider = Provider(
-  (ref) => ref
+ProviderFamily<List<DiaryRecord>, String?> diaryRecordListProvider =
+    Provider.family(
+  (ref, tag) => ref
       .watch(diaryRecordControllerProvider)
       .where(
         (r) =>
             (ref.watch(showFavouritesProvider).state && r.favourite) ||
             !ref.watch(showFavouritesProvider).state,
       )
+      .where((r) => tag == null || r.tags.contains(tag))
       .toList()
         ..sort((r1, r2) => -r1.created.compareTo(r2.created)),
 );
-var dailyRecordsProvider = Provider((ref) {
+ProviderFamily<Map<String, List<DiaryRecord>>, String?> dailyRecordsProvider =
+    Provider.family((ref, tag) {
   return groupBy<DiaryRecord, String>(
-    ref.watch(diaryRecordListProvider),
+    ref.watch(diaryRecordListProvider(tag)),
     (r) {
       var recordCreatedDate = r.created.date();
       return DateFormat.yMd().format(recordCreatedDate);
     },
   );
 });
-var weeklyRecordsProvider = Provider((ref) {
+ProviderFamily<Map<String, List<DiaryRecord>>, String?> weeklyRecordsProvider =
+    Provider.family((ref, tag) {
   return groupBy<DiaryRecord, String>(
-    ref.watch(diaryRecordListProvider),
+    ref.watch(diaryRecordListProvider(tag)),
     (r) {
       var recordWeek = DateRange.withinWeek(r.created);
       var fromDateStr = DateFormat.yMd().format(recordWeek.from);

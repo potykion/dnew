@@ -15,6 +15,7 @@ abstract class DiaryRecord implements _$DiaryRecord, WithId {
     required String text,
     required String userId,
     @Default(false) bool favourite,
+    @Default(<String>[]) List<String> tags,
   }) = _DiaryRecord;
 
   factory DiaryRecord.fromJson(Map<String, dynamic> json) =>

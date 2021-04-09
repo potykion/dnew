@@ -11,9 +11,10 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 class ListPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
-    var records = useProvider(diaryRecordListProvider);
-    var dailyRecords = useProvider(dailyRecordsProvider);
-    var weeklyRecords = useProvider(weeklyRecordsProvider);
+    var tag = ModalRoute.of(context)!.settings.arguments as String?;
+    var records = useProvider(diaryRecordListProvider(tag));
+    var dailyRecords = useProvider(dailyRecordsProvider(tag));
+    var weeklyRecords = useProvider(weeklyRecordsProvider(tag));
 
     var displayMode = useProvider(displayModeControllerProvider);
 
@@ -25,7 +26,7 @@ class ListPage extends HookWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("dnew"),
+        title: Text(tag ?? "dnew"),
         actions: [
           IconButton(
             icon: showFavourites
