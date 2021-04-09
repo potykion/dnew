@@ -1,6 +1,6 @@
 import 'package:dnew/logic/diary/controllers.dart';
-import 'package:dnew/logic/settings/controllers.dart';
-import 'package:dnew/logic/settings/models.dart';
+import 'package:dnew/logic/settings/display_mode/controllers.dart';
+import 'package:dnew/logic/settings/display_mode/models.dart';
 import 'package:dnew/routes.dart';
 import 'package:dnew/widgets/bottom.dart';
 import 'package:dnew/widgets/list.dart';
