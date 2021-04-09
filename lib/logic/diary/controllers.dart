@@ -85,3 +85,14 @@ ProviderFamily<Map<String, List<DiaryRecord>>, String?> weeklyRecordsProvider =
     },
   );
 });
+
+var tagsProvider = Provider(
+  (ref) =>
+      ref.watch(diaryRecordControllerProvider).expand((r) => r.tags).toSet(),
+);
+
+ProviderFamily<Iterable<String>, String> searchTagsProvider = Provider.family(
+  (ref, tagPattern) => ref
+      .watch(tagsProvider)
+      .where((t) => t.toLowerCase().contains(tagPattern.toLowerCase())),
+);

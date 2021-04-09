@@ -60,7 +60,7 @@ class DiaryRecordCard extends HookWidget {
                   TextSpan(text: record.text),
                   if (record.tags.isNotEmpty) ...[
                     TextSpan(text: "\n\n"),
-                    for (var tag in record.tags)
+                    for (var tag in record.tags) ...[
                       TextSpan(
                         text: tag,
                         style: Theme.of(context).textTheme.button,
@@ -70,7 +70,9 @@ class DiaryRecordCard extends HookWidget {
                                 Routes.list,
                                 arguments: tag,
                               ),
-                      )
+                      ),
+                      TextSpan(text: " "),
+                    ]
                   ]
                 ]),
               ),

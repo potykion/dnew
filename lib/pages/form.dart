@@ -1,5 +1,6 @@
 import 'package:dnew/logic/diary/models.dart';
 import 'package:dnew/logic/diary/controllers.dart';
+import 'package:dnew/widgets/tags.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -17,24 +18,6 @@ class DiaryRecordFormPage extends HookWidget {
     var textTec = useTextEditingController(text: record.value.text);
     textTec.addListener(() {
       record.value = record.value.copyWith(text: textTec.text.trim());
-    });
-
-    var tagsTec = useTextEditingController(text: record.value.tags.join(" "));
-    tagsTec.addListener(() {
-      if (tagsTec.text.endsWith("#")) {
-        //  todo show overlay
-      }
-
-      // tagsTec.text.length >= 2 = #s
-      if (tagsTec.text.length >= 2) {
-        // #sam1 #sam2#sam3 sam > [#sam1, #sam2, #sam3]
-        record.value = record.value.copyWith(
-          tags: RegExp(r"(#\w+)")
-              .allMatches(tagsTec.text)
-              .map((m) => m.group(0)!)
-              .toList(),
-        );
-      }
     });
 
     return Scaffold(
@@ -68,11 +51,10 @@ class DiaryRecordFormPage extends HookWidget {
               ),
             ),
             Divider(),
-            TextFormField(
-              controller: tagsTec,
-              decoration: InputDecoration(
-                hintText: "Теги, например #работа",
-              ),
+            TagsInput(
+              initial: record.value.tags,
+              change: (tags) =>
+                  record.value = record.value.copyWith(tags: tags),
             ),
           ],
         ),
