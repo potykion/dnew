@@ -16,7 +16,7 @@ class DiaryRecordFormPage extends HookWidget {
 
     var textTec = useTextEditingController(text: record.value.text);
     textTec.addListener(() {
-      record.value = record.value.copyWith(text: textTec.text);
+      record.value = record.value.copyWith(text: textTec.text.trim());
     });
 
     var tagsTec = useTextEditingController(text: record.value.tags.join(" "));
