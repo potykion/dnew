@@ -7,6 +7,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../routes.dart';
 
@@ -49,7 +50,10 @@ class DiaryRecordCard extends HookWidget {
                   Spacer(),
                   GestureDetector(
                     child: record.favourite
-                        ? Icon(Icons.favorite, color: Theme.of(context).accentColor,)
+                        ? Icon(
+                            Icons.favorite,
+                            color: Theme.of(context).accentColor,
+                          )
                         : Icon(Icons.favorite_border),
                     onTap: () => context
                         .read(diaryRecordControllerProvider.notifier)
@@ -60,7 +64,17 @@ class DiaryRecordCard extends HookWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  MarkdownBody(data: record.text),
+                  MarkdownBody(
+                    data: record.text,
+                    onTapLink: (_, href, __) async {
+                      if (href != null) {
+                        await launch(href);
+                      }
+                    },
+                    styleSheet: MarkdownStyleSheet(
+                      a: Theme.of(context).textTheme.button,
+                    ),
+                  ),
                   if (record.tags.isNotEmpty)
                     RichText(
                       text: TextSpan(
