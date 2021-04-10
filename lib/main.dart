@@ -32,11 +32,12 @@ class MyApp extends HookWidget {
       title: 'dnew',
       theme: ThemeData(
         brightness: Brightness.light,
-        primarySwatch: palette,
+        primarySwatch: Colors.deepPurple,
         inputDecorationTheme: InputDecorationTheme(
           contentPadding: EdgeInsets.all(0),
           border: InputBorder.none,
         ),
+        textTheme: TextTheme(button: TextStyle(color: Colors.deepPurple)),
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,

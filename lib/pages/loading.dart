@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dnew/logic/diary/controllers.dart';
 import 'package:dnew/routes.dart';
@@ -33,7 +34,14 @@ class LoadingPage extends HookWidget {
     });
 
     return Scaffold(
-      body: Center(child: CircularProgressIndicator()),
+      body: Center(child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(),
+          Padding(padding: EdgeInsets.only(bottom: 8)),
+          Text("Грузим записи...")
+        ],
+      )),
     );
   }
 }

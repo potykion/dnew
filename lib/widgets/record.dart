@@ -57,7 +57,10 @@ class DiaryRecordCard extends HookWidget {
               ),
               RichText(
                 text: TextSpan(children: [
-                  TextSpan(text: record.text),
+                  TextSpan(
+                    text: record.text,
+                    style: Theme.of(context).textTheme.bodyText2,
+                  ),
                   if (record.tags.isNotEmpty) ...[
                     TextSpan(text: "\n\n"),
                     for (var tag in record.tags) ...[
