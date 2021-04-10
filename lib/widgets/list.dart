@@ -13,11 +13,12 @@ class DiaryRecordList extends StatelessWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return ListView(
-      children: records.map((r) => DiaryRecordCard(record: r)).toList(),
-    );
-  }
+  Widget build(BuildContext context) => SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (_, index) => DiaryRecordCard(record: records[index]),
+          childCount: records.length,
+        ),
+      );
 }
 
 class GroupedDiaryRecordList extends HookWidget {
@@ -34,21 +35,23 @@ class GroupedDiaryRecordList extends HookWidget {
   Widget build(BuildContext context) {
     var openedIndexState = useState<int?>(0);
 
-    return ListView.builder(
-      itemBuilder: (context, index) {
-        var dayRecords = [...groupedRecords.entries][index];
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (_, index) {
+          var dayRecords = [...groupedRecords.entries][index];
 
-        return DiaryRecordsCollapse(
-          label: dayRecords.key,
-          dateRecords: dayRecords.value,
-          opened: openedIndexState.value == index,
-          onOpenedChange: (opened) {
-            openedIndexState.value = opened ? index : null;
-          },
-          showDate: showDate,
-        );
-      },
-      itemCount: groupedRecords.length,
+          return DiaryRecordsCollapse(
+            label: dayRecords.key,
+            dateRecords: dayRecords.value,
+            opened: openedIndexState.value == index,
+            onOpenedChange: (opened) {
+              openedIndexState.value = opened ? index : null;
+            },
+            showDate: showDate,
+          );
+        },
+        childCount: groupedRecords.length,
+      ),
     );
   }
 }
