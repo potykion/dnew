@@ -1,4 +1,5 @@
 import 'package:dnew/logic/diary/controllers.dart';
+import 'package:dnew/logic/diary/search/models.dart';
 import 'package:dnew/logic/settings/display_mode/controllers.dart';
 import 'package:dnew/logic/settings/display_mode/models.dart';
 import 'package:dnew/routes.dart';
@@ -12,32 +13,32 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 class ListPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
-    var tag = ModalRoute
-        .of(context)!
-        .settings
-        .arguments as String?;
-    var records = useProvider(diaryRecordListProvider(tag));
-    var dailyRecords = useProvider(dailyRecordsProvider(tag));
-    var weeklyRecords = useProvider(weeklyRecordsProvider(tag));
+    var searchQuery =
+        (ModalRoute.of(context)!.settings.arguments as SearchQuery?) ??
+            SearchQuery.text();
+    var records = useProvider(diaryRecordListProvider(searchQuery));
+    var dailyRecords = useProvider(dailyRecordsProvider(searchQuery));
+    var weeklyRecords = useProvider(weeklyRecordsProvider(searchQuery));
 
     var displayMode = useProvider(displayModeControllerProvider);
 
-    var showFavouriteState = useProvider(showFavouritesProvider);
-    var showFavourites = showFavouriteState.state;
-
     return Scaffold(
       body: CustomScrollView(
+        physics: BouncingScrollPhysics(),
         slivers: [
           SearchAppBar(
-            title: tag ?? "",
+            searchQuery: searchQuery,
           ),
-
           if (records.isEmpty)
             SliverToBoxAdapter(
-              child: Center(
-                child: showFavourites
-                    ? Text("Нет избранных записей")
-                    : Text("Нет записей - самое время завести одну"),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height -
+                    (kToolbarHeight + 10) -
+                    kBottomNavigationBarHeight -
+                    MediaQuery.of(context).padding.top,
+                child: Center(
+                  child: Text("Записи не найдены"),
+                ),
               ),
             ),
           if (displayMode == DiaryRecordDisplayMode.list)

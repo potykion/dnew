@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:collection/collection.dart';
 import 'package:dnew/logic/diary/db.dart';
 import 'package:dnew/logic/core/utils/dt.dart';
+import 'package:dnew/logic/diary/search/models.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -48,23 +49,22 @@ var diaryRecordControllerProvider =
   (ref) => DiaryRecordController(ref.watch(diaryRepoProvider)),
 );
 
-var showFavouritesProvider = StateProvider((ref) => false);
 
-ProviderFamily<List<DiaryRecord>, String?> diaryRecordListProvider =
+ProviderFamily<List<DiaryRecord>, SearchQuery> diaryRecordListProvider =
     Provider.family(
-  (ref, tag) => ref
+  (ref, query) => ref
       .watch(diaryRecordControllerProvider)
       .where(
-        (r) =>
-            (ref.watch(showFavouritesProvider).state && r.favourite) ||
-            !ref.watch(showFavouritesProvider).state,
+        (r) => query.when(
+            text: (text) => r.text.toLowerCase().contains(text.toLowerCase()),
+            tag: (tag) => r.tags.contains(tag),
+            favourite: () => r.favourite),
       )
-      .where((r) => tag == null || r.tags.contains(tag))
       .toList()
         ..sort((r1, r2) => -r1.created.compareTo(r2.created)),
 );
-ProviderFamily<Map<String, List<DiaryRecord>>, String?> dailyRecordsProvider =
-    Provider.family((ref, tag) {
+ProviderFamily<Map<String, List<DiaryRecord>>, SearchQuery>
+    dailyRecordsProvider = Provider.family((ref, tag) {
   return groupBy<DiaryRecord, String>(
     ref.watch(diaryRecordListProvider(tag)),
     (r) {
@@ -73,8 +73,8 @@ ProviderFamily<Map<String, List<DiaryRecord>>, String?> dailyRecordsProvider =
     },
   );
 });
-ProviderFamily<Map<String, List<DiaryRecord>>, String?> weeklyRecordsProvider =
-    Provider.family((ref, tag) {
+ProviderFamily<Map<String, List<DiaryRecord>>, SearchQuery>
+    weeklyRecordsProvider = Provider.family((ref, tag) {
   return groupBy<DiaryRecord, String>(
     ref.watch(diaryRecordListProvider(tag)),
     (r) {
@@ -87,8 +87,12 @@ ProviderFamily<Map<String, List<DiaryRecord>>, String?> weeklyRecordsProvider =
 });
 
 var tagsProvider = Provider(
-  (ref) =>
-      ref.watch(diaryRecordControllerProvider).expand((r) => r.tags).toSet(),
+  (ref) => ref
+      .watch(diaryRecordControllerProvider)
+      .expand((r) => r.tags)
+      .toList()
+      .reversed
+      .toSet(),
 );
 
 ProviderFamily<Iterable<String>, String> searchTagsProvider = Provider.family(

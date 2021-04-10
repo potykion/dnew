@@ -1,5 +1,6 @@
 import 'package:dnew/logic/diary/models.dart';
 import 'package:dnew/logic/diary/controllers.dart';
+import 'package:dnew/logic/diary/search/models.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -48,7 +49,7 @@ class DiaryRecordCard extends HookWidget {
                   Spacer(),
                   GestureDetector(
                     child: record.favourite
-                        ? Icon(Icons.favorite)
+                        ? Icon(Icons.favorite, color: Theme.of(context).accentColor,)
                         : Icon(Icons.favorite_border),
                     onTap: () => context
                         .read(diaryRecordControllerProvider.notifier)
@@ -73,7 +74,7 @@ class DiaryRecordCard extends HookWidget {
                                 ..onTap = () => Navigator.pushNamed(
                                       context,
                                       Routes.list,
-                                      arguments: tag,
+                                      arguments: SearchQuery.tag(tag),
                                     ),
                             ),
                             TextSpan(text: " "),
