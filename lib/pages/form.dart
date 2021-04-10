@@ -20,11 +20,28 @@ class DiaryRecordFormPage extends HookWidget {
       record.value = record.value.copyWith(text: textTec.text.trim());
     });
 
+    save() async {
+      if (record.value.id != null) {
+        await context
+            .read(diaryRecordControllerProvider.notifier)
+            .update(record.value);
+      } else {
+        await context
+            .read(diaryRecordControllerProvider.notifier)
+            .create(record.value);
+      }
+
+      Navigator.pop(context);
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          record.value.id != null ? "Редактирование записи" : "Создание записи",
-        ),
+        actions: [
+          IconButton(
+            onPressed: save,
+            icon: Icon(Icons.done),
+          ),
+        ],
       ),
       body: Padding(
         padding: EdgeInsets.all(8),
@@ -58,22 +75,6 @@ class DiaryRecordFormPage extends HookWidget {
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.save),
-        onPressed: () async {
-          if (record.value.id != null) {
-            await context
-                .read(diaryRecordControllerProvider.notifier)
-                .update(record.value);
-          } else {
-            await context
-                .read(diaryRecordControllerProvider.notifier)
-                .create(record.value);
-          }
-
-          Navigator.pop(context);
-        },
       ),
     );
   }
