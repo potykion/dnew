@@ -21,45 +21,36 @@ class SearchAppBar extends HookWidget {
       showFavouriteState.state = !showFavouriteState.state;
     }
 
-    return MediaQuery.removePadding(
-      context: context,
-      removeTop: true,
-      child: SliverPadding(
-        padding: EdgeInsets.only(
-          top: 10 + MediaQuery.of(context).padding.top,
-          left: 10,
-          right: 10,
-          bottom: 10,
-        ),
-        sliver: SliverAppBar(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-          ),
-          title: TextFormField(
-            controller: tec,
-            decoration: InputDecoration(
-              hintText: "Поиск"
-            ),
-          ),
-          actions: [
-            IconButton(
-              icon: showFavourites
-                  ? Icon(Icons.favorite)
-                  : Icon(Icons.favorite_border),
-              onPressed: toggleShowFavourites,
-            )
-          ],
-          //
-          // child: ClipRRect(
-          //   borderRadius: BorderRadius.all(Radius.circular(10)),
-          //   child: ListTile(
-          //     tileColor: Theme.of(context).primaryColor,
-          //     title: Text(title),
-          //     trailing: ,
-          //   ),
-          // ),
-        ),
+    return SliverAppBar(
+      floating: true,
+      toolbarHeight: kToolbarHeight + 10,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadiusDirectional.vertical(
+          bottom: Radius.circular(10)
+        )
       ),
+      // backgroundColor: Theme.of(context).canvasColor,
+      title: TextFormField(
+        controller: tec,
+        decoration: InputDecoration(
+            hintText: "Поищем что-нибудь?",
+            filled: true,
+            isDense: true,
+            fillColor: Theme.of(context).canvasColor,
+            contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+            border: OutlineInputBorder(
+              borderSide: BorderSide(width: 0, style: BorderStyle.none),
+              borderRadius: BorderRadius.circular(10),
+            )),
+      ),
+      actions: [
+        IconButton(
+          icon: showFavourites
+              ? Icon(Icons.favorite)
+              : Icon(Icons.favorite_border),
+          onPressed: toggleShowFavourites,
+        )
+      ],
     );
   }
 }

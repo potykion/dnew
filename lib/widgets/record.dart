@@ -146,16 +146,20 @@ class DiaryRecordsCollapse extends HookWidget {
                   60 // BottomNav height
               ,
             ),
-            child: ListView(
-              shrinkWrap: true,
-              children: dateRecords
-                  .map(
-                    (r) => DiaryRecordCard(
-                      record: r,
-                      showDate: showDate,
-                    ),
-                  )
-                  .toList(),
+            child: MediaQuery.removePadding(
+              context: context,
+              removeTop: true,
+              child: ListView(
+                shrinkWrap: true,
+                children: dateRecords
+                    .map(
+                      (r) => DiaryRecordCard(
+                        record: r,
+                        showDate: showDate,
+                      ),
+                    )
+                    .toList(),
+              ),
             ),
           )
       ],
