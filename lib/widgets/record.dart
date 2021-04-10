@@ -3,6 +3,7 @@ import 'package:dnew/logic/diary/controllers.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -55,29 +56,32 @@ class DiaryRecordCard extends HookWidget {
                   ),
                 ],
               ),
-              RichText(
-                text: TextSpan(children: [
-                  TextSpan(
-                    text: record.text,
-                    style: Theme.of(context).textTheme.bodyText2,
-                  ),
-                  if (record.tags.isNotEmpty) ...[
-                    TextSpan(text: "\n\n"),
-                    for (var tag in record.tags) ...[
-                      TextSpan(
-                        text: tag,
-                        style: Theme.of(context).textTheme.button,
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () => Navigator.pushNamed(
-                                context,
-                                Routes.list,
-                                arguments: tag,
-                              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  MarkdownBody(data: record.text),
+                  if (record.tags.isNotEmpty)
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(text: "\n"),
+                          for (var tag in record.tags) ...[
+                            TextSpan(
+                              text: tag,
+                              style: Theme.of(context).textTheme.button,
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () => Navigator.pushNamed(
+                                      context,
+                                      Routes.list,
+                                      arguments: tag,
+                                    ),
+                            ),
+                            TextSpan(text: " "),
+                          ]
+                        ],
                       ),
-                      TextSpan(text: " "),
-                    ]
-                  ]
-                ]),
+                    )
+                ],
               ),
             ],
           ),
