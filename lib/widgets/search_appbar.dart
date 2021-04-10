@@ -35,6 +35,9 @@ class SearchInput extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    var inputEditable = searchQuery is TextSearchQuery &&
+        (searchQuery as TextSearchQuery).text.isEmpty;
+
     var showCleanButtonState = useState(false);
 
     var tec = useTextEditingController(
@@ -47,22 +50,24 @@ class SearchInput extends HookWidget {
     tec.addListener(() {
       showCleanButtonState.value = tec.text.isNotEmpty;
     });
+    void submitTextQuery() {
+      if (tec.text.isNotEmpty) {
+        var query = SearchQuery.text(tec.text);
+        tec.text = "";
+        Navigator.pushNamed(
+          context,
+          Routes.list,
+          arguments: query,
+        );
+      }
+    }
 
     var tags = useProvider(tagsProvider);
 
     return TypeAheadFormField<SearchQuery>(
       textFieldConfiguration: TextFieldConfiguration(
-        onSubmitted: (_) {
-          if (tec.text.isNotEmpty) {
-            Navigator.pushNamed(
-              context,
-              Routes.list,
-              arguments: SearchQuery.text(tec.text),
-            );
-          }
-        },
-        enabled: searchQuery is TextSearchQuery &&
-            (searchQuery as TextSearchQuery).text.isEmpty,
+        onSubmitted: (_) => submitTextQuery(),
+        enabled: inputEditable,
         controller: tec,
         decoration: InputDecoration(
           hintText: "Поищем что-нибудь?",
@@ -83,29 +88,17 @@ class SearchInput extends HookWidget {
                   if (showCleanButtonState.value) ...[
                     GestureDetector(
                       child: Icon(Icons.close),
-                      onTap: () {
-                        tec.text = "";
-                      },
+                      onTap: () => tec.text = "",
                     ),
                     Padding(padding: EdgeInsets.only(right: 10)),
                   ],
                   GestureDetector(
                     child: Icon(
                       Icons.search,
-                      color: searchQuery is TextSearchQuery &&
-                              (searchQuery as TextSearchQuery).text.isEmpty
-                          ? null
-                          : Theme.of(context).accentColor,
+                      color:
+                          inputEditable ? null : Theme.of(context).accentColor,
                     ),
-                    onTap: () {
-                      if (tec.text.isNotEmpty) {
-                        Navigator.pushNamed(
-                          context,
-                          Routes.list,
-                          arguments: SearchQuery.text(tec.text),
-                        );
-                      }
-                    },
+                    onTap: submitTextQuery,
                   )
                 ],
                 if (searchQuery is FavouriteSearchQuery)
@@ -121,7 +114,7 @@ class SearchInput extends HookWidget {
       hideSuggestionsOnKeyboardHide: true,
       hideOnEmpty: true,
       getImmediateSuggestions: true,
-      suggestionsCallback: (String query) async {
+      suggestionsCallback: (query) async {
         if (query == "") {
           return [
             for (var tag in tags.take(3)) SearchQuery.tag(tag),
@@ -137,23 +130,17 @@ class SearchInput extends HookWidget {
 
         return [];
       },
-      itemBuilder: (context, query) {
-        return query.when(
-          text: (text) => ListTile(title: Text(text), dense: true),
-          tag: (tag) => ListTile(title: Text(tag), dense: true),
-          favourite: () => ListTile(
-            title: Text("Избранное"),
-            trailing: Icon(
-              Icons.favorite,
-              color: Theme.of(context).accentColor,
-            ),
-            dense: true,
-          ),
-        );
-      },
-      onSuggestionSelected: (query) {
-        Navigator.pushNamed(context, Routes.list, arguments: query);
-      },
+      itemBuilder: (context, query) => query.when(
+        text: (text) => ListTile(title: Text(text), dense: true),
+        tag: (tag) => ListTile(title: Text(tag), dense: true),
+        favourite: () => ListTile(
+          title: Text("Избранное"),
+          trailing: Icon(Icons.favorite, color: Theme.of(context).accentColor),
+          dense: true,
+        ),
+      ),
+      onSuggestionSelected: (query) =>
+          Navigator.pushNamed(context, Routes.list, arguments: query),
     );
   }
 }
