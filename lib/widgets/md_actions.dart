@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:dnew/logic/core/utils/str.dart';
 import 'package:flutter/material.dart';
 
 class KeyboardMarkdownActions extends StatelessWidget {
@@ -50,6 +53,30 @@ class KeyboardMarkdownActions extends StatelessWidget {
     );
   }
 
+  void addHeader([String header = "#"]) {
+    var lineSelection = getLineSelection(
+      initialText,
+      position: initialSelection.baseOffset,
+    );
+
+    var headerText = initialText.isEmpty
+        ? "$header \n"
+        : lineSelection.textInside(initialText).isEmpty
+            ? "\n$header \n"
+            : "\n\n$header \n";
+
+    var beforeHeading = initialText.substring(0, initialSelection.baseOffset);
+    var afterHeading = initialText.substring(lineSelection.extentOffset);
+    var newText = "$beforeHeading$headerText$afterHeading";
+
+    var newSelection = TextSelection(
+      baseOffset: initialSelection.baseOffset + headerText.length - 1,
+      extentOffset: initialSelection.baseOffset + headerText.length - 1,
+    );
+
+    onAction(newText, newSelection);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -82,33 +109,15 @@ class KeyboardMarkdownActions extends StatelessWidget {
             ] else ...[
               SmallTextButton(
                 text: "H1",
-                onPressed: () => onAction(
-                  "$initialText# ",
-                  TextSelection(
-                    baseOffset: initialSelection.extentOffset + "# ".length,
-                    extentOffset: initialSelection.extentOffset + "# ".length,
-                  ),
-                ),
+                onPressed: () => addHeader("#"),
               ),
               SmallTextButton(
                 text: "H2",
-                onPressed: () => onAction(
-                  "$initialText## ",
-                  TextSelection(
-                    baseOffset: initialSelection.extentOffset + "## ".length,
-                    extentOffset: initialSelection.extentOffset + "## ".length,
-                  ),
-                ),
+                onPressed: () => addHeader("##"),
               ),
               SmallTextButton(
                 text: "H3",
-                onPressed: () => onAction(
-                  "$initialText### ",
-                  TextSelection(
-                    baseOffset: initialSelection.extentOffset + "### ".length,
-                    extentOffset: initialSelection.extentOffset + "### ".length,
-                  ),
-                ),
+                onPressed: () => addHeader("###"),
               ),
               IconButton(
                 icon: Icon(Icons.list),
@@ -137,8 +146,7 @@ class KeyboardMarkdownActions extends StatelessWidget {
                   "$initialText> ",
                   TextSelection(
                     baseOffset: initialSelection.extentOffset + "> ".length,
-                    extentOffset:
-                    initialSelection.extentOffset + "> ".length,
+                    extentOffset: initialSelection.extentOffset + "> ".length,
                   ),
                 ),
               ),

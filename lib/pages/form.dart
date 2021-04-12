@@ -1,6 +1,6 @@
 import 'package:dnew/logic/diary/models.dart';
 import 'package:dnew/logic/diary/controllers.dart';
-import 'package:dnew/widgets/actions.dart';
+import 'package:dnew/widgets/md_actions.dart';
 import 'package:dnew/widgets/record.dart';
 import 'package:dnew/widgets/tags.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,6 +16,7 @@ class DiaryRecordFormPage extends HookWidget {
   Widget build(BuildContext context) {
     var showPreview = useState(false);
 
+    var mdActionsSelectionState = useState(TextSelection(baseOffset: 0, extentOffset: 0));
     // null - не показываем экшены
     // true - показываем экшены для выделенного текста
     // false - показываем экшены для текста (списки, хедеры)
@@ -36,6 +37,7 @@ class DiaryRecordFormPage extends HookWidget {
       record.value = record.value.copyWith(text: textTec.text);
     });
     textTec.addListener(() {
+      mdActionsSelectionState.value =textTec.selection;
       var textSelected =
           textTec.selection.baseOffset != textTec.selection.extentOffset;
       showSelectionActionsState.value = textSelected ? true : false;
@@ -136,7 +138,7 @@ class DiaryRecordFormPage extends HookWidget {
                     bottom: 0,
                     child: KeyboardMarkdownActions(
                       initialText: textTec.text,
-                      initialSelection: textTec.selection,
+                      initialSelection: mdActionsSelectionState.value,
                       isSelectionActions: showSelectionActionsState.value!,
                       onAction: (text, selection) {
                         textTec.text = text;
