@@ -16,12 +16,20 @@ class DiaryRecordFormPage extends HookWidget {
   Widget build(BuildContext context) {
     var showPreview = useState(false);
 
-    var showSelectionActionsState = useState(false);
+    // null - не показываем экшены
+    // true - показываем экшены для выделенного текста
+    // false - показываем экшены для текста (списки, хедеры)
+    var showSelectionActionsState = useState<bool?>(null);
 
     var record = useState(
       ModalRoute.of(context)!.settings.arguments as DiaryRecord? ??
           DiaryRecord.blank(userId: FirebaseAuth.instance.currentUser!.uid),
     );
+
+    var focus = useFocusNode();
+    focus.addListener(() {
+      showSelectionActionsState.value = focus.hasFocus ? false : null;
+    });
 
     var textTec = useTextEditingController(text: record.value.text);
     textTec.addListener(() {
@@ -30,7 +38,15 @@ class DiaryRecordFormPage extends HookWidget {
     textTec.addListener(() {
       var textSelected =
           textTec.selection.baseOffset != textTec.selection.extentOffset;
-      showSelectionActionsState.value = textSelected;
+      showSelectionActionsState.value = textSelected ? true : false;
+    });
+
+    var keyboardVisibilityController = KeyboardVisibilityController();
+
+    keyboardVisibilityController.onChange.listen((bool visible) {
+      if (!visible) {
+        showSelectionActionsState.value = null;
+      }
     });
 
     save() async {
@@ -88,7 +104,7 @@ class DiaryRecordFormPage extends HookWidget {
                       Divider(),
                       Expanded(
                         child: TextFormField(
-                          // focusNode: focusState.value,
+                          focusNode: focus,
                           controller: textTec,
                           keyboardType: TextInputType.multiline,
                           textCapitalization: TextCapitalization.sentences,
@@ -99,27 +115,35 @@ class DiaryRecordFormPage extends HookWidget {
                         ),
                       ),
                       Divider(),
-                      TagsInput(
-                        initial: record.value.tags,
-                        change: (tags) =>
-                            record.value = record.value.copyWith(tags: tags),
+                      Padding(
+                        padding: EdgeInsets.only(
+                          bottom: showSelectionActionsState.value != null
+                              ? 30 // = высота KeyboardMarkdownActions
+                              : 0,
+                        ),
+                        child: TagsInput(
+                          initial: record.value.tags,
+                          change: (tags) =>
+                              record.value = record.value.copyWith(tags: tags),
+                        ),
                       ),
                     ],
                   ),
                 ),
-                Positioned(
-                  width: MediaQuery.of(context).size.width,
-                  bottom: 0,
-                  child: KeyboardActions(
-                    initialText: textTec.text,
-                    initialSelection: textTec.selection,
-                    isSelectionActions: showSelectionActionsState.value,
-                    onAction: (text, selection) {
-                      textTec.text = text;
-                      textTec.selection = selection;
-                    },
+                if (showSelectionActionsState.value != null)
+                  Positioned(
+                    width: MediaQuery.of(context).size.width,
+                    bottom: 0,
+                    child: KeyboardMarkdownActions(
+                      initialText: textTec.text,
+                      initialSelection: textTec.selection,
+                      isSelectionActions: showSelectionActionsState.value!,
+                      onAction: (text, selection) {
+                        textTec.text = text;
+                        textTec.selection = selection;
+                      },
+                    ),
                   ),
-                ),
               ],
             ),
     );

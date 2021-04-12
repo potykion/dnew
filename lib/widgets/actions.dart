@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class KeyboardActions extends StatelessWidget {
+class KeyboardMarkdownActions extends StatelessWidget {
   final bool isSelectionActions;
   final String initialText;
   final TextSelection initialSelection;
   final Function(String text, TextSelection selection) onAction;
 
-  const KeyboardActions({
+  const KeyboardMarkdownActions({
     Key? key,
     this.isSelectionActions = false,
     required this.onAction,
