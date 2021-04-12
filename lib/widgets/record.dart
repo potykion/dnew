@@ -14,27 +14,35 @@ import '../routes.dart';
 class DiaryRecordCard extends HookWidget {
   final DiaryRecord record;
   final bool showDate;
+  final bool readonly;
 
   const DiaryRecordCard({
     Key? key,
     required this.record,
     this.showDate = true,
+    this.readonly = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
       child: InkWell(
-        onTap: () => Navigator.pushNamed(
-          context,
-          Routes.form,
-          arguments: record,
-        ),
-        onLongPress: () async {
-          if (await _showConfirmDialog(context) ?? false) {
-            context.read(diaryRecordControllerProvider.notifier).delete(record);
-          }
-        },
+        onTap: () => readonly
+            ? null
+            : Navigator.pushNamed(
+                context,
+                Routes.form,
+                arguments: record,
+              ),
+        onLongPress: readonly
+            ? null
+            : () async {
+                if (await _showConfirmDialog(context) ?? false) {
+                  context
+                      .read(diaryRecordControllerProvider.notifier)
+                      .delete(record);
+                }
+              },
         child: Padding(
           padding: EdgeInsets.all(8),
           child: Column(
@@ -55,9 +63,11 @@ class DiaryRecordCard extends HookWidget {
                             color: Theme.of(context).accentColor,
                           )
                         : Icon(Icons.favorite_border),
-                    onTap: () => context
-                        .read(diaryRecordControllerProvider.notifier)
-                        .toggleFavourite(record),
+                    onTap: readonly
+                        ? null
+                        : () => context
+                            .read(diaryRecordControllerProvider.notifier)
+                            .toggleFavourite(record),
                   ),
                 ],
               ),
