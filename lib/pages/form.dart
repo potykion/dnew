@@ -1,3 +1,4 @@
+import 'package:dnew/logic/core/utils/str.dart';
 import 'package:dnew/logic/diary/models.dart';
 import 'package:dnew/logic/diary/controllers.dart';
 import 'package:dnew/widgets/md_actions.dart';
@@ -16,7 +17,8 @@ class DiaryRecordFormPage extends HookWidget {
   Widget build(BuildContext context) {
     var showPreview = useState(false);
 
-    var mdActionsSelectionState = useState(TextSelection(baseOffset: 0, extentOffset: 0));
+    var mdActionsSelectionState =
+        useState(TextSelection(baseOffset: 0, extentOffset: 0));
     // null - не показываем экшены
     // true - показываем экшены для выделенного текста
     // false - показываем экшены для текста (списки, хедеры)
@@ -34,10 +36,12 @@ class DiaryRecordFormPage extends HookWidget {
 
     var textTec = useTextEditingController(text: record.value.text);
     textTec.addListener(() {
-      record.value = record.value.copyWith(text: textTec.text);
+      if (record.value.text != textTec) {
+        record.value = record.value.copyWith(text: textTec.text);
+      }
     });
     textTec.addListener(() {
-      mdActionsSelectionState.value =textTec.selection;
+      mdActionsSelectionState.value = textTec.selection;
       var textSelected =
           textTec.selection.baseOffset != textTec.selection.extentOffset;
       showSelectionActionsState.value = textSelected ? true : false;
