@@ -1,3 +1,4 @@
+
 import 'package:dnew/logic/core/utils/str.dart';
 import 'package:dnew/logic/diary/models.dart';
 import 'package:dnew/logic/diary/controllers.dart';
@@ -34,12 +35,35 @@ class DiaryRecordFormPage extends HookWidget {
       showSelectionActionsState.value = focus.hasFocus ? false : null;
     });
 
+    // Если прожали перевод строки и пред строка - элемент списка (- / - [ ] / - [x])
+    // То прописываем новый элемент списка
     var textTec = useTextEditingController(text: record.value.text);
-    textTec.addListener(() {
-      if (record.value.text != textTec) {
-        record.value = record.value.copyWith(text: textTec.text);
+    useValueChanged<String, void>(textTec.text, (old, __) {
+      if ("\n".allMatches(textTec.text).length > "\n".allMatches(old).length) {
+        var initialSelection = textTec.selection.baseOffset;
+        var prevLine =
+            getPreviousLine(textTec.text, position: initialSelection).trim();
+
+        if (prevLine != "- [ ]" && prevLine != "- [x]" && prevLine != "-") {
+          if (prevLine.startsWith("- [ ]") || prevLine.startsWith("- [x]")) {
+            textTec.text =
+                "${textTec.text.substring(0, initialSelection)}- [ ] ${textTec.text.substring(initialSelection)}";
+            textTec.selection = TextSelection(
+              baseOffset: initialSelection + "- [ ] ".length,
+              extentOffset: initialSelection + "- [ ] ".length,
+            );
+          } else if (prevLine.startsWith("-")) {
+            textTec.text =
+                "${textTec.text.substring(0, initialSelection)}- ${textTec.text.substring(initialSelection)}";
+            textTec.selection = TextSelection(
+              baseOffset: initialSelection + "- ".length,
+              extentOffset: initialSelection + "- ".length,
+            );
+          }
+        }
       }
     });
+
     textTec.addListener(() {
       mdActionsSelectionState.value = textTec.selection;
       var textSelected =
@@ -56,6 +80,8 @@ class DiaryRecordFormPage extends HookWidget {
     });
 
     save() async {
+      record.value = record.value.copyWith(text: textTec.text);
+
       if (record.value.id != null) {
         await context
             .read(diaryRecordControllerProvider.notifier)
@@ -77,7 +103,10 @@ class DiaryRecordFormPage extends HookWidget {
             icon: Icon(Icons.done),
           ),
           IconButton(
-            onPressed: () => showPreview.value = !showPreview.value,
+            onPressed: () {
+              record.value = record.value.copyWith(text: textTec.text);
+              showPreview.value = !showPreview.value;
+            },
             icon: Icon(showPreview.value ? Icons.edit : Icons.remove_red_eye),
           )
         ].reversed.toList(),

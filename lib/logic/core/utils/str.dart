@@ -20,11 +20,21 @@ TextSelection getLineSelection(String str, {int? position}) {
   var strFromNewline = str.substring(fromNewline);
 
   var toNewline = strFromNewline.indexOf("\n");
-  toNewline =
-      toNewline == -1 ? str.length : (fromNewline + toNewline);
+  toNewline = toNewline == -1 ? str.length : (fromNewline + toNewline);
 
   return TextSelection(
     baseOffset: fromNewline,
     extentOffset: toNewline,
   );
+}
+
+String getPreviousLine(String str, {required int position}) {
+  var beforePosition = str.substring(0, position);
+  var beforeNewline =
+      beforePosition.substring(0, beforePosition.lastIndexOf("\n"));
+
+  var previousLineStart = beforeNewline.lastIndexOf("\n");
+  previousLineStart = previousLineStart == -1 ? 0 : previousLineStart;
+  var previousLine = beforeNewline.substring(previousLineStart);
+  return previousLine;
 }

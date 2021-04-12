@@ -121,13 +121,7 @@ class KeyboardMarkdownActions extends StatelessWidget {
               ),
               IconButton(
                 icon: Icon(Icons.list),
-                onPressed: () => onAction(
-                  "$initialText- ",
-                  TextSelection(
-                    baseOffset: initialSelection.extentOffset + "- ".length,
-                    extentOffset: initialSelection.extentOffset + "- ".length,
-                  ),
-                ),
+                onPressed: () => addHeader("-"),
               ),
               IconButton(
                 icon: Icon(Icons.check_box),
