@@ -53,21 +53,21 @@ class KeyboardMarkdownActions extends StatelessWidget {
     );
   }
 
-  void addHeader([String header = "#"]) {
+  void addMarkdown([String markdown = "#", String extra = ""]) {
     var lineSelection = getLineSelection(
       initialText,
       position: initialSelection.baseOffset,
     );
 
     var headerText = initialText.isEmpty
-        ? "$header \n"
+        ? "$markdown \n"
         : lineSelection.textInside(initialText).isEmpty
-            ? "\n$header \n"
-            : "\n\n$header \n";
+            ? "\n$markdown \n"
+            : "\n\n$markdown \n";
 
     var beforeHeading = initialText.substring(0, initialSelection.baseOffset);
     var afterHeading = initialText.substring(lineSelection.extentOffset);
-    var newText = "$beforeHeading$headerText$afterHeading";
+    var newText = "$beforeHeading$headerText$extra$afterHeading";
 
     var newSelection = TextSelection(
       baseOffset: initialSelection.baseOffset + headerText.length - 1,
@@ -109,51 +109,31 @@ class KeyboardMarkdownActions extends StatelessWidget {
             ] else ...[
               SmallTextButton(
                 text: "H1",
-                onPressed: () => addHeader("#"),
+                onPressed: () => addMarkdown("#"),
               ),
               SmallTextButton(
                 text: "H2",
-                onPressed: () => addHeader("##"),
+                onPressed: () => addMarkdown("##"),
               ),
               SmallTextButton(
                 text: "H3",
-                onPressed: () => addHeader("###"),
+                onPressed: () => addMarkdown("###"),
               ),
               IconButton(
                 icon: Icon(Icons.list),
-                onPressed: () => addHeader("-"),
+                onPressed: () => addMarkdown("-"),
               ),
               IconButton(
                 icon: Icon(Icons.check_box),
-                onPressed: () => onAction(
-                  "$initialText- [ ] ",
-                  TextSelection(
-                    baseOffset: initialSelection.extentOffset + "- [ ] ".length,
-                    extentOffset:
-                        initialSelection.extentOffset + "- [ ] ".length,
-                  ),
-                ),
+                onPressed: () => addMarkdown("- [ ]"),
               ),
               IconButton(
                 icon: Icon(Icons.format_quote),
-                onPressed: () => onAction(
-                  "$initialText> ",
-                  TextSelection(
-                    baseOffset: initialSelection.extentOffset + "> ".length,
-                    extentOffset: initialSelection.extentOffset + "> ".length,
-                  ),
-                ),
+                onPressed: () => addMarkdown(">"),
               ),
               IconButton(
                 icon: Icon(Icons.code),
-                onPressed: () => onAction(
-                  "$initialText```\n\n```",
-                  TextSelection(
-                    baseOffset: initialSelection.extentOffset + "```\n".length,
-                    extentOffset:
-                        initialSelection.extentOffset + "```\n".length,
-                  ),
-                ),
+                onPressed: () => addMarkdown("```\n", "```\n"),
               ),
             ]
           ],
