@@ -34,6 +34,7 @@ class DiaryRecordFormPage extends HookWidget {
       showSelectionActionsState.value = focus.hasFocus ? false : null;
     });
 
+    // todo вытащить это отсюда нахуй https://github.com/potykion/dnew/issues/31
     // Если прожали перевод строки и пред строка - элемент списка (- / - [ ] / - [x])
     // То прописываем новый элемент списка
     var textTec = useTextEditingController(text: record.value.text);
