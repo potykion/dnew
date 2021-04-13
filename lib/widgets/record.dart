@@ -1,3 +1,5 @@
+import 'package:markdown/markdown.dart' as md;
+
 import 'package:dnew/logic/diary/models.dart';
 import 'package:dnew/logic/diary/controllers.dart';
 import 'package:dnew/logic/diary/search/models.dart';
@@ -83,6 +85,10 @@ class DiaryRecordCard extends HookWidget {
                     },
                     styleSheet: MarkdownStyleSheet(
                       a: Theme.of(context).textTheme.button,
+                      blockquoteDecoration: BoxDecoration(
+                        color: Theme.of(context).accentColor,
+                        borderRadius: BorderRadius.circular(2.0),
+                      ),
                     ),
                   ),
                   if (record.tags.isNotEmpty)
@@ -132,6 +138,18 @@ class DiaryRecordCard extends HookWidget {
           ],
         ),
       );
+}
+
+class ParagraphWithNewlineBuilder extends MarkdownElementBuilder {
+  @override
+  Widget? visitText(md.Text text, TextStyle? preferredStyle) {
+    return RichText(
+      text: TextSpan(
+        text: text.text,
+        style: preferredStyle,
+      ),
+    );
+  }
 }
 
 class DiaryRecordsCollapse extends HookWidget {
