@@ -1,4 +1,3 @@
-
 import 'package:dnew/logic/core/utils/str.dart';
 import 'package:dnew/logic/diary/models.dart';
 import 'package:dnew/logic/diary/controllers.dart';
@@ -44,7 +43,10 @@ class DiaryRecordFormPage extends HookWidget {
         var prevLine =
             getPreviousLine(textTec.text, position: initialSelection).trim();
 
-        if (prevLine != "- [ ]" && prevLine != "- [x]" && prevLine != "-") {
+        if (prevLine != "- [ ]" &&
+            prevLine != "- [x]" &&
+            prevLine != "-" &&
+            !RegExp(r"\d+\.$").hasMatch(prevLine)) {
           if (prevLine.startsWith("- [ ]") || prevLine.startsWith("- [x]")) {
             textTec.text =
                 "${textTec.text.substring(0, initialSelection)}- [ ] ${textTec.text.substring(initialSelection)}";
@@ -58,6 +60,16 @@ class DiaryRecordFormPage extends HookWidget {
             textTec.selection = TextSelection(
               baseOffset: initialSelection + "- ".length,
               extentOffset: initialSelection + "- ".length,
+            );
+          } else if (RegExp(r"\d+\.").hasMatch(prevLine)) {
+            var prevNum =
+                int.parse(prevLine.substring(0, prevLine.indexOf(".")));
+
+            textTec.text =
+                "${textTec.text.substring(0, initialSelection)}${prevNum + 1}. ${textTec.text.substring(initialSelection)}";
+            textTec.selection = TextSelection(
+              baseOffset: initialSelection + "${prevNum + 1}. ".length,
+              extentOffset: initialSelection + "${prevNum + 1}. ".length,
             );
           }
         }

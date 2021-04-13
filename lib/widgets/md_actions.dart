@@ -124,6 +124,10 @@ class KeyboardMarkdownActions extends StatelessWidget {
                 onPressed: () => addMarkdown("-"),
               ),
               IconButton(
+                icon: Icon(Icons.format_list_numbered),
+                onPressed: () => addMarkdown("1."),
+              ),
+              IconButton(
                 icon: Icon(Icons.check_box),
                 onPressed: () => addMarkdown("- [ ]"),
               ),
