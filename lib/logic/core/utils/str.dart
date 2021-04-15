@@ -30,10 +30,10 @@ TextSelection getLineSelection(String str, {int? position}) {
 
 String getPreviousLine(String str, {required int position}) {
   var beforePosition = str.substring(0, position);
+
   var beforePositionNewline = beforePosition.lastIndexOf("\n");
-  var beforeNewline = beforePositionNewline == -1
-    ? beforePosition
-      : beforePosition.substring(0, beforePositionNewline);
+  if (beforePositionNewline == -1) return "";
+  var beforeNewline = beforePosition.substring(0, beforePositionNewline);
 
   var previousLineStart = beforeNewline.lastIndexOf("\n");
   previousLineStart = previousLineStart == -1 ? 0 : previousLineStart;

@@ -25,6 +25,10 @@ void main() {
   test("getPreviousLine", () {
     expect(getPreviousLine("ass\ntities", position: 4), "ass");
     expect(getPreviousLine("##\n\n###", position: 3), "##");
+    expect(getPreviousLine("", position: 0), "");
+    expect(getPreviousLine("#\n", position: 0), "");
+    expect(getPreviousLine("#\n", position: 2), "#");
+    expect(getPreviousLine("#\n", position: 1), "");
 
   });
 }

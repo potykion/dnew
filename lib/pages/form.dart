@@ -1,4 +1,3 @@
-import 'package:dnew/logic/core/utils/str.dart';
 import 'package:dnew/logic/diary/models.dart';
 import 'package:dnew/logic/diary/controllers.dart';
 import 'package:dnew/widgets/md_actions.dart';
@@ -15,28 +14,27 @@ import 'package:intl/intl.dart';
 class DiaryRecordFormPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
-    var showPreview = useState(false);
-
-    var mdActionsSelectionState =
-        useState(TextSelection(baseOffset: 0, extentOffset: 0));
-    // null - не показываем экшены
-    // true - показываем экшены для выделенного текста
-    // false - показываем экшены для текста (списки, хедеры)
-    var showSelectionActionsState = useState<bool?>(null);
-
     var record = useState(
       ModalRoute.of(context)!.settings.arguments as DiaryRecord? ??
           DiaryRecord.blank(userId: FirebaseAuth.instance.currentUser!.uid),
     );
 
+    var showPreview = useState(false);
+
+    // null - не показываем экшены
+    // true - показываем экшены для выделенного текста
+    // false - показываем экшены для текста (списки, хедеры)
+    var showSelectionActionsState = useState<bool?>(null);
+
     var focus = useFocusNode();
+    // При потере фокуса - скрываем экшены
     focus.addListener(() {
       showSelectionActionsState.value = focus.hasFocus ? false : null;
     });
 
+    var textTec = useTextEditingController(text: record.value.text);
     // Если прожали перевод строки и пред строка - элемент списка (- / - [ ] / - [x])
     // То прописываем новый элемент списка
-    var textTec = useTextEditingController(text: record.value.text);
     useValueChanged<String, void>(textTec.text, (old, __) {
       var newlineEntered =
           "\n".allMatches(textTec.text).length > "\n".allMatches(old).length;
@@ -50,16 +48,15 @@ class DiaryRecordFormPage extends HookWidget {
       }
     });
 
+    // Если выделили текст, то показываем экшены для выделенного теста
     textTec.addListener(() {
-      mdActionsSelectionState.value = textTec.selection;
       var textSelected =
           textTec.selection.baseOffset != textTec.selection.extentOffset;
       showSelectionActionsState.value = textSelected ? true : false;
     });
 
     var keyboardVisibilityController = KeyboardVisibilityController();
-
-    keyboardVisibilityController.onChange.listen((bool visible) {
+    keyboardVisibilityController.onChange.listen((visible) {
       if (!visible) {
         showSelectionActionsState.value = null;
       }
@@ -156,8 +153,9 @@ class DiaryRecordFormPage extends HookWidget {
                     width: MediaQuery.of(context).size.width,
                     bottom: 0,
                     child: KeyboardMarkdownActions(
+                      // todo textTec.text, textTec.selection is not reactive
                       initialText: textTec.text,
-                      initialSelection: mdActionsSelectionState.value,
+                      initialSelection: textTec.selection,
                       isSelectionActions: showSelectionActionsState.value!,
                       onAction: (text, selection) {
                         textTec.text = text;
