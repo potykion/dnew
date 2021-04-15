@@ -87,7 +87,7 @@ class DiaryRecordFormPage extends HookWidget {
       isSaving.value = false;
     }
 
-    var saveTimer = useState(Timer(Duration(seconds: 5), save));
+    var saveTimer = useState(Timer(Duration(seconds: 3), save));
     useEffect(() => () => saveTimer.value.cancel());
 
     return Scaffold(
