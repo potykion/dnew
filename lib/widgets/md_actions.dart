@@ -1,7 +1,6 @@
-import 'dart:convert';
-
 import 'package:dnew/logic/core/utils/str.dart';
 import 'package:flutter/material.dart';
+import 'package:tuple/tuple.dart';
 
 class KeyboardMarkdownActions extends StatelessWidget {
   final bool isSelectionActions;
@@ -170,6 +169,50 @@ class SmallTextButton extends StatelessWidget {
               ),
         ),
         onPressed: onPressed,
+      ),
+    );
+  }
+}
+
+Tuple2<String, TextSelection>? tryContinueMarkdownList(
+    String initialText, TextSelection initialSelection) {
+  var cursor = initialSelection.baseOffset;
+  var prevLine = getPreviousLine(initialText, position: cursor).trim();
+
+  var prevListItemIsEmpty = prevLine != "- [ ]" &&
+      prevLine != "- [x]" &&
+      prevLine != "-" &&
+      !RegExp(r"\d+\.$").hasMatch(prevLine);
+  if (!prevListItemIsEmpty) {
+    return null;
+  }
+
+  var beforeCursor = initialText.substring(0, cursor);
+  var afterCursor = initialText.substring(cursor);
+  if (prevLine.startsWith("- [ ]") || prevLine.startsWith("- [x]")) {
+    return Tuple2(
+      "$beforeCursor- [ ] $afterCursor",
+      TextSelection(
+        baseOffset: cursor + "- [ ] ".length,
+        extentOffset: cursor + "- [ ] ".length,
+      ),
+    );
+  } else if (prevLine.startsWith("-")) {
+    return Tuple2(
+      "$beforeCursor- $afterCursor",
+      TextSelection(
+        baseOffset: cursor + "- ".length,
+        extentOffset: cursor + "- ".length,
+      ),
+    );
+  } else if (RegExp(r"\d+\.").hasMatch(prevLine)) {
+    var prevNum = int.parse(prevLine.substring(0, prevLine.indexOf(".")));
+
+    return Tuple2(
+      "$beforeCursor${prevNum + 1}. $afterCursor",
+      TextSelection(
+        baseOffset: cursor + "${prevNum + 1}. ".length,
+        extentOffset: cursor + "${prevNum + 1}. ".length,
       ),
     );
   }

@@ -34,45 +34,18 @@ class DiaryRecordFormPage extends HookWidget {
       showSelectionActionsState.value = focus.hasFocus ? false : null;
     });
 
-    // todo вытащить это отсюда нахуй https://github.com/potykion/dnew/issues/31
     // Если прожали перевод строки и пред строка - элемент списка (- / - [ ] / - [x])
     // То прописываем новый элемент списка
     var textTec = useTextEditingController(text: record.value.text);
     useValueChanged<String, void>(textTec.text, (old, __) {
-      if ("\n".allMatches(textTec.text).length > "\n".allMatches(old).length) {
-        var initialSelection = textTec.selection.baseOffset;
-        var prevLine =
-            getPreviousLine(textTec.text, position: initialSelection).trim();
-
-        if (prevLine != "- [ ]" &&
-            prevLine != "- [x]" &&
-            prevLine != "-" &&
-            !RegExp(r"\d+\.$").hasMatch(prevLine)) {
-          if (prevLine.startsWith("- [ ]") || prevLine.startsWith("- [x]")) {
-            textTec.text =
-                "${textTec.text.substring(0, initialSelection)}- [ ] ${textTec.text.substring(initialSelection)}";
-            textTec.selection = TextSelection(
-              baseOffset: initialSelection + "- [ ] ".length,
-              extentOffset: initialSelection + "- [ ] ".length,
-            );
-          } else if (prevLine.startsWith("-")) {
-            textTec.text =
-                "${textTec.text.substring(0, initialSelection)}- ${textTec.text.substring(initialSelection)}";
-            textTec.selection = TextSelection(
-              baseOffset: initialSelection + "- ".length,
-              extentOffset: initialSelection + "- ".length,
-            );
-          } else if (RegExp(r"\d+\.").hasMatch(prevLine)) {
-            var prevNum =
-                int.parse(prevLine.substring(0, prevLine.indexOf(".")));
-
-            textTec.text =
-                "${textTec.text.substring(0, initialSelection)}${prevNum + 1}. ${textTec.text.substring(initialSelection)}";
-            textTec.selection = TextSelection(
-              baseOffset: initialSelection + "${prevNum + 1}. ".length,
-              extentOffset: initialSelection + "${prevNum + 1}. ".length,
-            );
-          }
+      var newlineEntered =
+          "\n".allMatches(textTec.text).length > "\n".allMatches(old).length;
+      if (newlineEntered) {
+        var newTextAndSelection =
+            tryContinueMarkdownList(textTec.text, textTec.selection);
+        if (newTextAndSelection != null) {
+          textTec.text = newTextAndSelection.item1;
+          textTec.selection = newTextAndSelection.item2;
         }
       }
     });

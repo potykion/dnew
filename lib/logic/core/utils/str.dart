@@ -32,7 +32,7 @@ String getPreviousLine(String str, {required int position}) {
   var beforePosition = str.substring(0, position);
   var beforePositionNewline = beforePosition.lastIndexOf("\n");
   var beforeNewline = beforePositionNewline == -1
-      ? beforePosition
+    ? beforePosition
       : beforePosition.substring(0, beforePositionNewline);
 
   var previousLineStart = beforeNewline.lastIndexOf("\n");
