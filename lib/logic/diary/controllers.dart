@@ -13,11 +13,10 @@ class DiaryRecordController extends StateNotifier<List<DiaryRecord>> {
 
   DiaryRecordController(this.repo) : super([]);
 
-  Future<void> create(DiaryRecord record) async {
-    state = [
-      ...state,
-      record.copyWith(id: await repo.insert(record)),
-    ];
+  Future<String> create(DiaryRecord record) async {
+    var id = await repo.insert(record);
+    state = [...state, record.copyWith(id: id)];
+    return id;
   }
 
   Future<void> listByUserId(String userId) async {
@@ -48,7 +47,6 @@ var diaryRecordControllerProvider =
     StateNotifierProvider<DiaryRecordController, List<DiaryRecord>>(
   (ref) => DiaryRecordController(ref.watch(diaryRepoProvider)),
 );
-
 
 ProviderFamily<List<DiaryRecord>, SearchQuery> diaryRecordListProvider =
     Provider.family(

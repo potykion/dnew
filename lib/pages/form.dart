@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dnew/logic/diary/models.dart';
 import 'package:dnew/logic/diary/controllers.dart';
 import 'package:dnew/widgets/md_actions.dart';
@@ -62,7 +64,12 @@ class DiaryRecordFormPage extends HookWidget {
       }
     });
 
+    var isSaving = useState(false);
     save() async {
+      if (textTec.text == record.value.text) return;
+
+      isSaving.value = true;
+
       record.value = record.value.copyWith(text: textTec.text);
 
       if (record.value.id != null) {
@@ -70,21 +77,42 @@ class DiaryRecordFormPage extends HookWidget {
             .read(diaryRecordControllerProvider.notifier)
             .update(record.value.copyWith(text: record.value.text.trim()));
       } else {
-        await context
-            .read(diaryRecordControllerProvider.notifier)
-            .create(record.value.copyWith(text: record.value.text.trim()));
+        record.value = record.value.copyWith(
+          id: await context
+              .read(diaryRecordControllerProvider.notifier)
+              .create(record.value.copyWith(text: record.value.text.trim())),
+        );
       }
 
-      Navigator.pop(context);
+      isSaving.value = false;
     }
+
+    var saveTimer = useState(Timer(Duration(seconds: 5), save));
+    useEffect(() => () => saveTimer.value.cancel());
 
     return Scaffold(
       appBar: AppBar(
         actions: [
-          IconButton(
-            onPressed: save,
-            icon: Icon(Icons.done),
-          ),
+          if (isSaving.value)
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: Center(
+                child: Container(
+                  child: CircularProgressIndicator(),
+                  width: 20,
+                  height: 20,
+                ),
+              ),
+            )
+          else
+            IconButton(
+              onPressed: () {
+                saveTimer.value.cancel();
+                save();
+                Navigator.of(context).pop();
+              },
+              icon: Icon(Icons.done),
+            ),
           IconButton(
             onPressed: () {
               record.value = record.value.copyWith(text: textTec.text);
