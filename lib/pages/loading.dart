@@ -22,7 +22,8 @@ class LoadingPage extends HookWidget {
         var user = FirebaseAuth.instance.currentUser;
         if (user?.isAnonymous ?? true) {
           await FirebaseAuth.instance.signOut();
-          Navigator.pushReplacementNamed(context, Routes.auth);
+          await Navigator.pushReplacementNamed(context, Routes.auth);
+          return;
         }
 
         await context
