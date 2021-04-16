@@ -66,6 +66,7 @@ class DiaryRecordFormPage extends HookWidget {
 
     var isSaving = useState(false);
     save() async {
+      print("save");
       if (textTec.text == record.value.text) return;
 
       isSaving.value = true;
@@ -87,8 +88,16 @@ class DiaryRecordFormPage extends HookWidget {
       isSaving.value = false;
     }
 
-    var saveTimer = useState(Timer(Duration(seconds: 3), save));
-    useEffect(() => () => saveTimer.value.cancel());
+    var saveTimer = useState<Timer?>(null);
+    useEffect(
+      () {
+        return () {
+          print("dis");
+          saveTimer.value?.cancel();
+        };
+      },
+      [],
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -107,7 +116,7 @@ class DiaryRecordFormPage extends HookWidget {
           else
             IconButton(
               onPressed: () {
-                saveTimer.value.cancel();
+                saveTimer.value?.cancel();
                 save();
                 Navigator.of(context).pop();
               },
@@ -150,6 +159,13 @@ class DiaryRecordFormPage extends HookWidget {
                       Divider(),
                       Expanded(
                         child: TextFormField(
+                          onChanged: (_) {
+                            saveTimer.value?.cancel();
+                            saveTimer.value = Timer(
+                              Duration(milliseconds: 500),
+                              save,
+                            );
+                          },
                           focusNode: focus,
                           controller: textTec,
                           keyboardType: TextInputType.multiline,
