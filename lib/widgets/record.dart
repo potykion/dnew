@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:markdown/markdown.dart' as md;
 
 import 'package:dnew/logic/diary/models.dart';
@@ -36,15 +37,11 @@ class DiaryRecordCard extends HookWidget {
                 Routes.form,
                 arguments: record,
               ),
-        onLongPress: readonly
-            ? null
-            : () async {
-                if (await _showConfirmDialog(context) ?? false) {
-                  context
-                      .read(diaryRecordControllerProvider.notifier)
-                      .delete(record);
-                }
-              },
+        onLongPress: () {
+          Clipboard.setData(ClipboardData(text: record.text));
+          final snackBar = SnackBar(content: Text('Запись скопирована.'));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        },
         child: Padding(
           padding: EdgeInsets.all(8),
           child: Column(
@@ -120,24 +117,6 @@ class DiaryRecordCard extends HookWidget {
       ),
     );
   }
-
-  Future<bool?> _showConfirmDialog(BuildContext context) => showDialog<bool>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text("Удаление записи"),
-          content: Text("Вы хотите удалить запись?"),
-          actions: [
-            TextButton(
-              child: Text("Нет"),
-              onPressed: () => Navigator.pop(context, false),
-            ),
-            TextButton(
-              child: Text("Да"),
-              onPressed: () => Navigator.pop(context, true),
-            ),
-          ],
-        ),
-      );
 }
 
 class ParagraphWithNewlineBuilder extends MarkdownElementBuilder {

@@ -90,12 +90,7 @@ class DiaryRecordFormPage extends HookWidget {
 
     var saveTimer = useState<Timer?>(null);
     useEffect(
-      () {
-        return () {
-          print("dis");
-          saveTimer.value?.cancel();
-        };
-      },
+      () => () => saveTimer.value?.cancel(),
       [],
     );
 
@@ -128,7 +123,18 @@ class DiaryRecordFormPage extends HookWidget {
               showPreview.value = !showPreview.value;
             },
             icon: Icon(showPreview.value ? Icons.edit : Icons.remove_red_eye),
-          )
+          ),
+          if (record.value.id != null)
+            IconButton(
+                icon: Icon(Icons.delete),
+                onPressed: () async {
+                  if (await _showConfirmDialog(context) ?? false) {
+                    context
+                        .read(diaryRecordControllerProvider.notifier)
+                        .delete(record.value);
+                    Navigator.pop(context);
+                  }
+                })
         ].reversed.toList(),
       ),
       body: showPreview.value
@@ -211,4 +217,22 @@ class DiaryRecordFormPage extends HookWidget {
             ),
     );
   }
+
+  Future<bool?> _showConfirmDialog(BuildContext context) => showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Удаление записи"),
+          content: Text("Вы хотите удалить запись?"),
+          actions: [
+            TextButton(
+              child: Text("Нет"),
+              onPressed: () => Navigator.pop(context, false),
+            ),
+            TextButton(
+              child: Text("Да"),
+              onPressed: () => Navigator.pop(context, true),
+            ),
+          ],
+        ),
+      );
 }
