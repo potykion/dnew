@@ -15,6 +15,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 
 class DiaryRecordFormPage extends HookWidget {
+
+  OverlayEntry? keyboardActionsOverlay;
+
   @override
   Widget build(BuildContext context) {
     var record = useState(
@@ -69,6 +72,35 @@ class DiaryRecordFormPage extends HookWidget {
           /// тупа ловим это
         }
       }
+    });
+
+
+    useValueChanged<bool?, void>(showSelectionActionsState.value, (_, __) {
+      print(showSelectionActionsState.value);
+      if (showSelectionActionsState.value == null) {
+        keyboardActionsOverlay?.remove();
+        return;
+      }
+
+      keyboardActionsOverlay = OverlayEntry(
+        builder: (context) => Positioned(
+          width: MediaQuery.of(context).size.width,
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+          child: KeyboardMarkdownActions(
+            initialText: textTec.text,
+            initialSelection: textTec.selection,
+            isSelectionActions: showSelectionActionsState.value ?? false,
+            onAction: (text, selection) {
+              textTec.text = text;
+              textTec.selection = selection;
+            },
+          ),
+        ),
+      );
+
+      WidgetsBinding.instance!.addPostFrameCallback((_) async {
+        Overlay.of(context)!.insert(keyboardActionsOverlay!);
+      });
     });
 
     var isSaving = useState(false);
@@ -149,81 +181,62 @@ class DiaryRecordFormPage extends HookWidget {
                 ),
               ),
             )
-          : Stack(
+          : Padding(
+            padding: EdgeInsets.all(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.all(8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 4),
-                        child: Text(
-                          DateFormat.yMd()
-                              .add_Hms()
-                              .format(record.value.created),
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      Divider(),
-                      Expanded(
-                        child: TextFormField(
-                          onChanged: (_) {
-                            if (textTec.text == record.value.text) return;
-                            record.value =
-                                record.value.copyWith(text: textTec.text);
-
-                            saveDebounce();
-                          },
-                          focusNode: focus,
-                          controller: textTec,
-                          keyboardType: TextInputType.multiline,
-                          textCapitalization: TextCapitalization.sentences,
-                          maxLines: null,
-                          decoration: InputDecoration(
-                            hintText: "Что произошло?",
-                          ),
-                        ),
-                      ),
-                      Divider(),
-                      Padding(
-                        padding: EdgeInsets.only(
-                          bottom: showSelectionActionsState.value != null
-                              ? 30 // = высота KeyboardMarkdownActions
-                              : 0,
-                        ),
-                        child: TagsInput(
-                          initial: record.value.tags,
-                          change: (tags) {
-                            if (ListEquality<String>()
-                                .equals(tags, record.value.tags)) return;
-
-                            record.value = record.value.copyWith(tags: tags);
-
-                            saveDebounce();
-                          },
-                        ),
-                      ),
-                    ],
+                  padding: EdgeInsets.symmetric(vertical: 4),
+                  child: Text(
+                    DateFormat.yMd()
+                        .add_Hms()
+                        .format(record.value.created),
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
-                if (showSelectionActionsState.value != null)
-                  Positioned(
-                    width: MediaQuery.of(context).size.width,
-                    bottom: 0,
-                    child: KeyboardMarkdownActions(
-                      // todo textTec.text, textTec.selection is not reactive
-                      initialText: textTec.text,
-                      initialSelection: textTec.selection,
-                      isSelectionActions: showSelectionActionsState.value!,
-                      onAction: (text, selection) {
-                        textTec.text = text;
-                        textTec.selection = selection;
-                      },
+                Divider(),
+                Expanded(
+                  child: TextFormField(
+                    onChanged: (_) {
+                      if (textTec.text == record.value.text) return;
+                      record.value =
+                          record.value.copyWith(text: textTec.text);
+
+                      saveDebounce();
+                    },
+                    focusNode: focus,
+                    controller: textTec,
+                    keyboardType: TextInputType.multiline,
+                    textCapitalization: TextCapitalization.sentences,
+                    maxLines: null,
+                    decoration: InputDecoration(
+                      hintText: "Что произошло?",
                     ),
                   ),
+                ),
+                Divider(),
+                Padding(
+                  padding: EdgeInsets.only(
+                    bottom: showSelectionActionsState.value != null
+                        ? 30 // = высота KeyboardMarkdownActions
+                        : 0,
+                  ),
+                  child: TagsInput(
+                    initial: record.value.tags,
+                    change: (tags) {
+                      if (ListEquality<String>()
+                          .equals(tags, record.value.tags)) return;
+
+                      record.value = record.value.copyWith(tags: tags);
+
+                      saveDebounce();
+                    },
+                  ),
+                ),
               ],
             ),
+          ),
     );
   }
 
