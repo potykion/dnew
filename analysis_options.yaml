@@ -21,3 +21,4 @@ linter:
     directives_ordering: false
     prefer_relative_imports: false
     avoid_catching_errors: false
+    omit_local_variable_types: false

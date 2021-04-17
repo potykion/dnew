@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:device_info/device_info.dart';
 
 class LoadingPage extends HookWidget {
   @override
@@ -19,8 +20,17 @@ class LoadingPage extends HookWidget {
         initializeDateFormatting('ru_RU');
 
         await Firebase.initializeApp();
-        FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
 
+        var deviceInfo = DeviceInfoPlugin();
+        var androidInfo = await deviceInfo.androidInfo;
+
+        if (!androidInfo.isPhysicalDevice) {
+          await FirebaseCrashlytics.instance
+              .setCrashlyticsCollectionEnabled(false);
+        } else {
+          FlutterError.onError =
+              FirebaseCrashlytics.instance.recordFlutterError;
+        }
 
         var user = FirebaseAuth.instance.currentUser;
         if (user?.isAnonymous ?? true) {
@@ -38,7 +48,8 @@ class LoadingPage extends HookWidget {
     });
 
     return Scaffold(
-      body: Center(child: Column(
+      body: Center(
+          child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircularProgressIndicator(),
