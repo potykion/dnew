@@ -177,6 +177,8 @@ class SmallTextButton extends StatelessWidget {
 Tuple2<String, TextSelection>? tryContinueMarkdownList(
     String initialText, TextSelection initialSelection) {
   var cursor = initialSelection.baseOffset;
+  if (cursor == -1) return null;
+
   var prevLine = getPreviousLine(initialText, position: cursor).trim();
 
   var prevListItemIsEmpty = prevLine != "- [ ]" &&

@@ -29,6 +29,8 @@ TextSelection getLineSelection(String str, {int? position}) {
 }
 
 String getPreviousLine(String str, {required int position}) {
+  if (position == -1) return "";
+
   var beforePosition = str.substring(0, position);
 
   var beforePositionNewline = beforePosition.lastIndexOf("\n");
