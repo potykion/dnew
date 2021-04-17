@@ -60,13 +60,18 @@ class DiaryRecordFormPage extends HookWidget {
     var keyboardVisibilityController = KeyboardVisibilityController();
     keyboardVisibilityController.onChange.listen((visible) {
       if (!visible) {
-        showSelectionActionsState.value = null;
+        try {
+          showSelectionActionsState.value = null;
+        } on FlutterError {
+          /// При уходе со страницы, клавиатура мб убрана =>
+          /// отработает обработчик, а страница уже задиспоузена =>
+          /// тупа ловим это
+        }
       }
     });
 
     var isSaving = useState(false);
     save() async {
-      print("save");
       if (textTec.text == record.value.text) return;
 
       isSaving.value = true;
@@ -168,7 +173,7 @@ class DiaryRecordFormPage extends HookWidget {
                           onChanged: (_) {
                             saveTimer.value?.cancel();
                             saveTimer.value = Timer(
-                              Duration(milliseconds: 500),
+                              Duration(milliseconds: 600),
                               save,
                             );
                           },
