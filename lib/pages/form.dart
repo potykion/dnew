@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dnew/logic/diary/models.dart';
 import 'package:dnew/logic/diary/controllers.dart';
 import 'package:dnew/widgets/md_actions.dart';
@@ -72,8 +73,6 @@ class DiaryRecordFormPage extends HookWidget {
 
     var isSaving = useState(false);
     save() async {
-      if (textTec.text == record.value.text) return;
-
       isSaving.value = true;
 
       record.value = record.value.copyWith(text: textTec.text);
@@ -174,7 +173,10 @@ class DiaryRecordFormPage extends HookWidget {
                             saveTimer.value?.cancel();
                             saveTimer.value = Timer(
                               Duration(milliseconds: 600),
-                              save,
+                              () {
+                                if (textTec.text == record.value.text) return;
+                                save();
+                              },
                             );
                           },
                           focusNode: focus,
@@ -196,8 +198,12 @@ class DiaryRecordFormPage extends HookWidget {
                         ),
                         child: TagsInput(
                           initial: record.value.tags,
-                          change: (tags) =>
-                              record.value = record.value.copyWith(tags: tags),
+                          change: (tags) {
+                            if (ListEquality<String>()
+                                .equals(tags, record.value.tags)) return;
+                            record.value = record.value.copyWith(tags: tags);
+                            save();
+                          },
                         ),
                       ),
                     ],
