@@ -175,6 +175,7 @@ class DiaryRecordFormPage extends HookWidget {
                               Duration(milliseconds: 600),
                               () {
                                 if (textTec.text == record.value.text) return;
+
                                 save();
                               },
                             );
@@ -199,10 +200,17 @@ class DiaryRecordFormPage extends HookWidget {
                         child: TagsInput(
                           initial: record.value.tags,
                           change: (tags) {
-                            if (ListEquality<String>()
-                                .equals(tags, record.value.tags)) return;
-                            record.value = record.value.copyWith(tags: tags);
-                            save();
+                            saveTimer.value?.cancel();
+                            saveTimer.value = Timer(
+                              Duration(milliseconds: 600),
+                              () {
+                                if (ListEquality<String>()
+                                    .equals(tags, record.value.tags)) return;
+                                record.value =
+                                    record.value.copyWith(tags: tags);
+                                save();
+                              },
+                            );
                           },
                         ),
                       ),
