@@ -205,7 +205,7 @@ Tuple2<String, TextSelection>? tryContinueMarkdownList(
         extentOffset: cursor + "- ".length,
       ),
     );
-  } else if (RegExp(r"\d+\.").hasMatch(prevLine)) {
+  } else if (RegExp(r"^\d+\.\s").hasMatch(prevLine)) {
     var prevNum = int.parse(prevLine.substring(0, prevLine.indexOf(".")));
 
     return Tuple2(
