@@ -91,21 +91,11 @@ class MarkdownEditor extends HookWidget {
       }
     });
 
-    // var keyboardVisibilityController = KeyboardVisibilityController();
-    // keyboardVisibilityController.onChange.listen((visible) {
-    //   if (!visible) {
-    //     try {
-    //       showSelectionActionsState.value = null;
-    //     } on FlutterError {
-    //       /// При уходе со страницы, клавиатура мб убрана =>
-    //       /// отработает обработчик, а страница уже задиспоузена =>
-    //       /// тупа ловим это
-    //     }
-    //   }
-    // });
+    textTec.addListener(() {
+      change(textTec.text);
+    });
 
     return TextFormField(
-      onChanged: change,
       focusNode: focus,
       controller: textTec,
       keyboardType: TextInputType.multiline,
