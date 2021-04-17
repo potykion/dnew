@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dnew/logic/diary/controllers.dart';
@@ -18,6 +19,8 @@ class LoadingPage extends HookWidget {
         initializeDateFormatting('ru_RU');
 
         await Firebase.initializeApp();
+        FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+
 
         var user = FirebaseAuth.instance.currentUser;
         if (user?.isAnonymous ?? true) {
