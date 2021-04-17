@@ -20,7 +20,18 @@ class MarkdownEditor extends HookWidget {
   Widget build(BuildContext context) {
     var textTec = useTextEditingController(text: initial);
 
-    void showKeyboardActionsOverlay({bool isSelectionActions = false}) {
+    void hideKeyboardActionsOverlay() {
+      keyboardActionsOverlay?.remove();
+    }
+
+    void showKeyboardActionsOverlay({
+      bool remove = false,
+      bool isSelectionActions = false,
+    }) {
+      if (remove) {
+        hideKeyboardActionsOverlay();
+      }
+
       keyboardActionsOverlay = OverlayEntry(
         builder: (context) => Positioned(
           width: MediaQuery.of(context).size.width,
@@ -37,12 +48,7 @@ class MarkdownEditor extends HookWidget {
         ),
       );
 
-
       Overlay.of(context)!.insert(keyboardActionsOverlay!);
-    }
-
-    void hideKeyboardActionsOverlay() {
-      keyboardActionsOverlay?.remove();
     }
 
     var focus = useFocusNode();
@@ -74,9 +80,15 @@ class MarkdownEditor extends HookWidget {
 
     // Если выделили текст, то показываем экшены для выделенного теста
     textTec.addListener(() {
+      if (textTec.selection.baseOffset == -1) return;
       var textSelected =
           textTec.selection.baseOffset != textTec.selection.extentOffset;
-      showKeyboardActionsOverlay(isSelectionActions: textSelected);
+      if (textSelected) {
+        showKeyboardActionsOverlay(
+          remove: true,
+          isSelectionActions: textSelected,
+        );
+      }
     });
 
     // var keyboardVisibilityController = KeyboardVisibilityController();
