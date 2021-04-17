@@ -75,8 +75,6 @@ class DiaryRecordFormPage extends HookWidget {
     save() async {
       isSaving.value = true;
 
-      record.value = record.value.copyWith(text: textTec.text);
-
       if (record.value.id != null) {
         await context
             .read(diaryRecordControllerProvider.notifier)
@@ -97,6 +95,10 @@ class DiaryRecordFormPage extends HookWidget {
       () => () => saveTimer.value?.cancel(),
       [],
     );
+    saveDebounce() {
+      saveTimer.value?.cancel();
+      saveTimer.value = Timer(Duration(milliseconds: 600), save);
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -122,10 +124,7 @@ class DiaryRecordFormPage extends HookWidget {
               icon: Icon(Icons.done),
             ),
           IconButton(
-            onPressed: () {
-              record.value = record.value.copyWith(text: textTec.text);
-              showPreview.value = !showPreview.value;
-            },
+            onPressed: () => showPreview.value = !showPreview.value,
             icon: Icon(showPreview.value ? Icons.edit : Icons.remove_red_eye),
           ),
           if (record.value.id != null)
@@ -170,15 +169,11 @@ class DiaryRecordFormPage extends HookWidget {
                       Expanded(
                         child: TextFormField(
                           onChanged: (_) {
-                            saveTimer.value?.cancel();
-                            saveTimer.value = Timer(
-                              Duration(milliseconds: 600),
-                              () {
-                                if (textTec.text == record.value.text) return;
+                            if (textTec.text == record.value.text) return;
+                            record.value =
+                                record.value.copyWith(text: textTec.text);
 
-                                save();
-                              },
-                            );
+                            saveDebounce();
                           },
                           focusNode: focus,
                           controller: textTec,
@@ -200,17 +195,12 @@ class DiaryRecordFormPage extends HookWidget {
                         child: TagsInput(
                           initial: record.value.tags,
                           change: (tags) {
-                            saveTimer.value?.cancel();
-                            saveTimer.value = Timer(
-                              Duration(milliseconds: 600),
-                              () {
-                                if (ListEquality<String>()
-                                    .equals(tags, record.value.tags)) return;
-                                record.value =
-                                    record.value.copyWith(tags: tags);
-                                save();
-                              },
-                            );
+                            if (ListEquality<String>()
+                                .equals(tags, record.value.tags)) return;
+
+                            record.value = record.value.copyWith(tags: tags);
+
+                            saveDebounce();
                           },
                         ),
                       ),
