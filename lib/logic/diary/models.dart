@@ -26,4 +26,19 @@ abstract class DiaryRecord implements _$DiaryRecord, WithId {
         created: DateTime.now(),
         text: "",
       );
+
+  bool isTextOverflow(
+    double screenWidth, [
+    double maxHeight = 300,
+    double charWidth = 7,
+    double lineHeight = 16,
+  ]) {
+    // 19 строк = 296 пх
+    // 51 символов помещается в одной строке =  368 пх => 8 пх - 1 сим.
+    var lines = text.split("\n");
+    var screenLines = lines
+        .map((line) => (line.length * charWidth / screenWidth).floor() + 1)
+        .reduce((sl1, sl2) => sl1 + sl2);
+    return screenLines * lineHeight >= maxHeight;
+  }
 }

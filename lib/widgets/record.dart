@@ -19,7 +19,7 @@ class DiaryRecordCard extends HookWidget {
   final bool showDate;
   final bool readonly;
 
-  const DiaryRecordCard({
+  DiaryRecordCard({
     Key? key,
     required this.record,
     this.showDate = true,
@@ -28,6 +28,8 @@ class DiaryRecordCard extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    var viewFull = useState(false);
+
     return Card(
       child: InkWell(
         onTap: () => readonly
@@ -47,74 +49,111 @@ class DiaryRecordCard extends HookWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
+              buildDateAndFav(context),
+              Divider(),
+              Stack(
                 children: [
-                  Text(
-                    (showDate ? DateFormat.yMd().add_Hms() : DateFormat.Hms())
-                        .format(record.created),
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  Spacer(),
-                  GestureDetector(
-                    child: record.favourite
-                        ? Icon(
-                            Icons.favorite,
-                            color: Theme.of(context).accentColor,
-                          )
-                        : Icon(Icons.favorite_border),
-                    onTap: readonly
-                        ? null
-                        : () => context
-                            .read(diaryRecordControllerProvider.notifier)
-                            .toggleFavourite(record),
-                  ),
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  MarkdownBody(
-                    data: record.text,
-                    onTapLink: (_, href, __) async {
-                      if (href != null) {
-                        await launch(href);
-                      }
-                    },
-                    styleSheet: MarkdownStyleSheet(
-                      a: Theme.of(context).textTheme.button,
-                      blockquoteDecoration: BoxDecoration(
-                        color: Theme.of(context).accentColor,
-                        borderRadius: BorderRadius.circular(2.0),
-                      ),
+                  if (viewFull.value)
+                    buildText(context, withSpace: true)
+                  else
+                    ConstrainedBox(
+                      constraints: BoxConstraints(maxHeight: 300),
+                      child: buildText(context),
                     ),
-                  ),
-                  if (record.tags.isNotEmpty)
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(text: "\n"),
-                          for (var tag in record.tags) ...[
-                            TextSpan(
-                              text: tag,
-                              style: Theme.of(context).textTheme.button,
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () => Navigator.pushNamed(
-                                      context,
-                                      Routes.list,
-                                      arguments: SearchQuery.tag(tag),
-                                    ),
-                            ),
-                            TextSpan(text: " "),
-                          ]
-                        ],
+                  if (record.isTextOverflow(MediaQuery.of(context).size.width))
+                    Positioned(
+                      child: FloatingActionButton(
+                        heroTag: null,
+                        mini: true,
+                        child: Icon(
+                          viewFull.value ? Icons.compress : Icons.expand,
+                        ),
+                        onPressed: () => viewFull.value = !viewFull.value,
                       ),
+                      bottom: 0,
+                      right: 0,
                     )
                 ],
-              ),
+              )
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Row buildDateAndFav(BuildContext context) {
+    return Row(
+      children: [
+        Text(
+          (showDate ? DateFormat.yMd().add_Hms() : DateFormat.Hms())
+              .format(record.created),
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        Spacer(),
+        GestureDetector(
+          child: record.favourite
+              ? Icon(
+                  Icons.favorite,
+                  color: Theme.of(context).accentColor,
+                )
+              : Icon(Icons.favorite_border),
+          onTap: readonly
+              ? null
+              : () => context
+                  .read(diaryRecordControllerProvider.notifier)
+                  .toggleFavourite(record),
+        ),
+      ],
+    );
+  }
+
+  Widget buildText(BuildContext context, {bool withSpace = false}) {
+    return Wrap(
+      clipBehavior: Clip.hardEdge,
+      children: [
+        MarkdownBody(
+          data: record.text,
+          onTapLink: (_, href, __) async {
+            if (href != null) {
+              await launch(href);
+            }
+          },
+          styleSheet: MarkdownStyleSheet(
+            a: Theme.of(context).textTheme.button,
+            blockquoteDecoration: BoxDecoration(
+              color: Theme.of(context).accentColor,
+              borderRadius: BorderRadius.circular(2.0),
+            ),
+          ),
+        ),
+        if (record.tags.isNotEmpty)
+          RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(text: "\n"),
+                for (var tag in record.tags) ...[
+                  TextSpan(
+                    text: tag,
+                    style: Theme.of(context).textTheme.button,
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () => Navigator.pushNamed(
+                            context,
+                            Routes.list,
+                            arguments: SearchQuery.tag(tag),
+                          ),
+                  ),
+                  TextSpan(text: " "),
+                ]
+              ],
+            ),
+          ),
+        if (withSpace)
+          SizedBox(
+            width: double.infinity,
+            height: 40,
+          ),
+      ],
     );
   }
 }
