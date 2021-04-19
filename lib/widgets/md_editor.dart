@@ -19,6 +19,9 @@ class MarkdownEditor extends HookWidget {
   @override
   Widget build(BuildContext context) {
     var textTec = useTextEditingController(text: initial);
+    useValueChanged<String, void>(initial, (_, __) {
+      if (textTec.text != initial) textTec.text = initial;
+    });
 
     void hideKeyboardActionsOverlay() {
       keyboardActionsOverlay?.remove();

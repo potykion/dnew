@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dnew/logic/diary/models.dart';
@@ -6,6 +7,7 @@ import 'package:dnew/logic/diary/controllers.dart';
 import 'package:dnew/widgets/md_editor.dart';
 import 'package:dnew/widgets/record.dart';
 import 'package:dnew/widgets/tags.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -91,7 +93,22 @@ class DiaryRecordFormPage extends HookWidget {
                         .delete(record.value);
                     Navigator.pop(context);
                   }
-                })
+                }),
+          if (record.value.text == "")
+            IconButton(
+              icon: Icon(Icons.file_download),
+              onPressed: () async {
+                var result = await FilePicker.platform.pickFiles(
+                  allowedExtensions: ["md", "txt"],
+                  type: FileType.custom,
+                );
+                if (result != null) {
+                  var file = File(result.files.single.path!);
+                  record.value =
+                      record.value.copyWith(text: file.readAsStringSync());
+                }
+              },
+            ),
         ].reversed.toList(),
       ),
       body: showPreview.value
