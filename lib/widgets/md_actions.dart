@@ -1,5 +1,6 @@
 import 'package:dnew/logic/core/utils/str.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:tuple/tuple.dart';
 
 class KeyboardMarkdownActions extends StatelessWidget {
@@ -79,10 +80,13 @@ class KeyboardMarkdownActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 50,
       color: Theme.of(context).canvasColor,
       child: Material(
         color: Colors.transparent,
-        child: Row(
+        child: ListView(
+          // shrinkWrap: true,
+          scrollDirection: Axis.horizontal,
           children: [
             if (isSelectionActions) ...[
               IconButton(
@@ -129,6 +133,10 @@ class KeyboardMarkdownActions extends StatelessWidget {
               IconButton(
                 icon: Icon(Icons.check_box),
                 onPressed: () => addMarkdown("- [ ]"),
+              ),
+              IconButton(
+                icon: Icon(Icons.image),
+                onPressed: () {},
               ),
               IconButton(
                 icon: Icon(Icons.format_quote),

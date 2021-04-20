@@ -86,12 +86,10 @@ class MarkdownEditor extends HookWidget {
       if (textTec.selection.baseOffset == -1) return;
       var textSelected =
           textTec.selection.baseOffset != textTec.selection.extentOffset;
-      if (textSelected) {
-        showKeyboardActionsOverlay(
-          remove: true,
-          isSelectionActions: textSelected,
-        );
-      }
+      showKeyboardActionsOverlay(
+        remove: true,
+        isSelectionActions: textSelected,
+      );
     });
 
     textTec.addListener(() {
