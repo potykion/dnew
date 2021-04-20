@@ -24,17 +24,19 @@ class MarkdownEditor extends HookWidget {
     });
 
     void hideKeyboardActionsOverlay() {
-      keyboardActionsOverlay?.remove();
+      try {
+        keyboardActionsOverlay?.remove();
+      } on AssertionError {
+        // Может быть такое, что оверлея уже нет => прост игнорим это
+      }
     }
 
+    useEffect(() => hideKeyboardActionsOverlay, []);
+
     void showKeyboardActionsOverlay({
-      bool remove = false,
       bool isSelectionActions = false,
     }) {
-      if (remove) {
-        hideKeyboardActionsOverlay();
-      }
-
+      hideKeyboardActionsOverlay();
       keyboardActionsOverlay = OverlayEntry(
         builder: (context) => Positioned(
           width: MediaQuery.of(context).size.width,
@@ -87,7 +89,6 @@ class MarkdownEditor extends HookWidget {
       var textSelected =
           textTec.selection.baseOffset != textTec.selection.extentOffset;
       showKeyboardActionsOverlay(
-        remove: true,
         isSelectionActions: textSelected,
       );
     });
