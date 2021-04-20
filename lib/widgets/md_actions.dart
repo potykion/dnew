@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:dnew/logic/core/utils/str.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -138,12 +141,20 @@ class KeyboardMarkdownActions extends StatelessWidget {
               IconButton(
                 icon: Icon(Icons.image),
                 onPressed: () async {
-                  var img = await ImagePicker().getImage(
+                  PickedFile? img = await ImagePicker().getImage(
                     source: ImageSource.gallery,
                     imageQuality: 80,
                   );
+
                   if (img != null) {
-                    addMarkdown("![img](${img.path})");
+                    File file = File(img.path);
+                    var filename = img.path.split("/").last;
+                    var ref = firebase_storage.FirebaseStorage.instance.ref(
+                      'uploads/${FirebaseAuth.instance.currentUser!.uid}/$filename',
+                    );
+                    await ref.putFile(file);
+                    var imgUrl = await ref.getDownloadURL();
+                    addMarkdown("![img]($imgUrl)");
                   }
                 },
               ),
