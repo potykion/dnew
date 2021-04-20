@@ -9,83 +9,86 @@ import 'package:tuple/tuple.dart';
 
 class KeyboardMarkdownActions extends StatelessWidget {
   final bool isSelectionActions;
-  final String initialText;
-  final TextSelection initialSelection;
-  final Function(String text, TextSelection selection) onAction;
+  final TextEditingController controller;
 
   const KeyboardMarkdownActions({
     Key? key,
     this.isSelectionActions = false,
-    required this.onAction,
-    required this.initialText,
-    required this.initialSelection,
+    required this.controller,
   }) : super(key: key);
 
   void wrapWithMarkdown(String markdown) {
-    var selectionEnd = initialSelection.extentOffset;
+    var selectionEnd = controller.selection.extentOffset;
 
-    var beforeSelection = initialText.substring(0, initialSelection.baseOffset);
-    var selection = initialText.substring(
-      initialSelection.baseOffset,
-      initialSelection.extentOffset,
+    var beforeSelection = controller.text.substring(
+        0, controller.selection.baseOffset);
+    var selection = controller.text.substring(
+      controller.selection.baseOffset,
+      controller.selection.extentOffset,
     );
-    var afterSelection = initialText.substring(initialSelection.extentOffset);
+    var afterSelection = controller.text.substring(
+        controller.selection.extentOffset);
 
-    onAction(
-      "$beforeSelection$markdown$selection$markdown$afterSelection",
-      TextSelection(
-        baseOffset: selectionEnd + markdown.length * 2,
-        extentOffset: selectionEnd + markdown.length * 2,
-      ),
+    controller.text =
+    "$beforeSelection$markdown$selection$markdown$afterSelection";
+    controller.selection = TextSelection(
+      baseOffset: selectionEnd + markdown.length * 2,
+      extentOffset: selectionEnd + markdown.length * 2,
     );
   }
 
   void wrapWithMarkdownLink() {
-    var selectionEnd = initialSelection.extentOffset;
+    var selectionEnd = controller.selection.extentOffset;
 
-    var beforeSelection = initialText.substring(0, initialSelection.baseOffset);
-    var selection = initialText.substring(
-        initialSelection.baseOffset, initialSelection.extentOffset);
-    var afterSelection = initialText.substring(initialSelection.extentOffset);
+    var beforeSelection = controller.text.substring(
+        0, controller.selection.baseOffset);
+    var selection = controller.text.substring(
+        controller.selection.baseOffset, controller.selection.extentOffset);
+    var afterSelection = controller.text.substring(
+        controller.selection.extentOffset);
 
-    onAction(
-      "$beforeSelection[$selection]()$afterSelection",
-      TextSelection(
-        baseOffset: selectionEnd + 3, // 3 = [](|)
-        extentOffset: selectionEnd + 3,
-      ),
+    controller.text = "$beforeSelection[$selection]()$afterSelection";
+    controller.selection = TextSelection(
+      baseOffset: selectionEnd + 3, // 3 = [](|)
+      extentOffset: selectionEnd + 3,
     );
   }
 
   void addMarkdown([String markdown = "#", String extra = ""]) {
     var lineSelection = getLineSelection(
-      initialText,
-      position: initialSelection.baseOffset,
+      controller.text,
+      position: controller.selection.baseOffset,
     );
 
-    var headerText = initialText.isEmpty
+    var headerText = controller.text.isEmpty
         ? "$markdown \n"
-        : lineSelection.textInside(initialText).isEmpty
-            ? "\n$markdown \n"
-            : "\n\n$markdown \n";
+        : lineSelection
+        .textInside(controller.text)
+        .isEmpty
+        ? "\n$markdown \n"
+        : "\n\n$markdown \n";
 
-    var beforeHeading = initialText.substring(0, initialSelection.baseOffset);
-    var afterHeading = initialText.substring(lineSelection.extentOffset);
+    var beforeHeading = controller.text.substring(
+        0, controller.selection.baseOffset);
+    var afterHeading = controller.text.substring(lineSelection.extentOffset);
     var newText = "$beforeHeading$headerText$extra$afterHeading";
 
     var newSelection = TextSelection(
-      baseOffset: initialSelection.baseOffset + headerText.length - 1,
-      extentOffset: initialSelection.baseOffset + headerText.length - 1,
+      baseOffset: controller.selection.baseOffset + headerText.length - 1,
+      extentOffset: controller.selection.baseOffset + headerText.length - 1,
     );
 
-    onAction(newText, newSelection);
+    controller.text = newText;
+    controller.selection = newSelection;
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 50,
-      color: Theme.of(context).canvasColor,
+      color: Theme
+          .of(context)
+          .canvasColor,
       child: Material(
         color: Colors.transparent,
         child: ListView(
@@ -113,60 +116,64 @@ class KeyboardMarkdownActions extends StatelessWidget {
                 icon: Icon(Icons.link),
                 onPressed: wrapWithMarkdownLink,
               ),
-            ] else ...[
-              SmallTextButton(
-                text: "H1",
-                onPressed: () => addMarkdown("#"),
-              ),
-              SmallTextButton(
-                text: "H2",
-                onPressed: () => addMarkdown("##"),
-              ),
-              SmallTextButton(
-                text: "H3",
-                onPressed: () => addMarkdown("###"),
-              ),
-              IconButton(
-                icon: Icon(Icons.list),
-                onPressed: () => addMarkdown("-"),
-              ),
-              IconButton(
-                icon: Icon(Icons.format_list_numbered),
-                onPressed: () => addMarkdown("1."),
-              ),
-              IconButton(
-                icon: Icon(Icons.check_box),
-                onPressed: () => addMarkdown("- [ ]"),
-              ),
-              IconButton(
-                icon: Icon(Icons.image),
-                onPressed: () async {
-                  PickedFile? img = await ImagePicker().getImage(
-                    source: ImageSource.gallery,
-                    imageQuality: 80,
-                  );
-
-                  if (img != null) {
-                    File file = File(img.path);
-                    var filename = img.path.split("/").last;
-                    var ref = firebase_storage.FirebaseStorage.instance.ref(
-                      'uploads/${FirebaseAuth.instance.currentUser!.uid}/$filename',
+            ] else
+              ...[
+                SmallTextButton(
+                  text: "H1",
+                  onPressed: () => addMarkdown("#"),
+                ),
+                SmallTextButton(
+                  text: "H2",
+                  onPressed: () => addMarkdown("##"),
+                ),
+                SmallTextButton(
+                  text: "H3",
+                  onPressed: () => addMarkdown("###"),
+                ),
+                IconButton(
+                  icon: Icon(Icons.list),
+                  onPressed: () => addMarkdown("-"),
+                ),
+                IconButton(
+                  icon: Icon(Icons.format_list_numbered),
+                  onPressed: () => addMarkdown("1."),
+                ),
+                IconButton(
+                  icon: Icon(Icons.check_box),
+                  onPressed: () => addMarkdown("- [ ]"),
+                ),
+                IconButton(
+                  icon: Icon(Icons.image),
+                  onPressed: () async {
+                    PickedFile? img = await ImagePicker().getImage(
+                      source: ImageSource.gallery,
+                      imageQuality: 80,
                     );
-                    await ref.putFile(file);
-                    var imgUrl = await ref.getDownloadURL();
-                    addMarkdown("![img]($imgUrl)");
-                  }
-                },
-              ),
-              IconButton(
-                icon: Icon(Icons.format_quote),
-                onPressed: () => addMarkdown(">"),
-              ),
-              IconButton(
-                icon: Icon(Icons.code),
-                onPressed: () => addMarkdown("```\n", "```\n"),
-              ),
-            ]
+
+                    if (img != null) {
+                      File file = File(img.path);
+                      var filename = img.path
+                          .split("/")
+                          .last;
+                      var ref = firebase_storage.FirebaseStorage.instance.ref(
+                        'uploads/${FirebaseAuth.instance.currentUser!
+                            .uid}/$filename',
+                      );
+                      await ref.putFile(file);
+                      var imgUrl = await ref.getDownloadURL();
+                      addMarkdown("![img]($imgUrl)");
+                    }
+                  },
+                ),
+                IconButton(
+                  icon: Icon(Icons.format_quote),
+                  onPressed: () => addMarkdown(">"),
+                ),
+                IconButton(
+                  icon: Icon(Icons.code),
+                  onPressed: () => addMarkdown("```\n", "```\n"),
+                ),
+              ]
           ],
         ),
       ),
@@ -191,10 +198,14 @@ class SmallTextButton extends StatelessWidget {
       child: TextButton(
         child: Text(
           text,
-          style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
+          style: Theme
+              .of(context)
+              .textTheme
+              .bodyText1!
+              .copyWith(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
         ),
         onPressed: onPressed,
       ),

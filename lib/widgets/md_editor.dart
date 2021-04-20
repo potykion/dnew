@@ -42,13 +42,8 @@ class MarkdownEditor extends HookWidget {
           width: MediaQuery.of(context).size.width,
           bottom: MediaQuery.of(context).viewInsets.bottom,
           child: KeyboardMarkdownActions(
-            initialText: textTec.text,
-            initialSelection: textTec.selection,
+            controller: textTec,
             isSelectionActions: isSelectionActions,
-            onAction: (text, selection) {
-              textTec.text = text;
-              textTec.selection = selection;
-            },
           ),
         ),
       );
