@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 import 'md_actions.dart';
 
@@ -16,6 +17,8 @@ class MarkdownEditor extends HookWidget {
 
   OverlayEntry? keyboardActionsOverlay;
 
+  var keyboardVisibilityController = KeyboardVisibilityController();
+
   @override
   Widget build(BuildContext context) {
     var textTec = useTextEditingController(text: initial);
@@ -23,18 +26,19 @@ class MarkdownEditor extends HookWidget {
       if (textTec.text != initial) textTec.text = initial;
     });
 
+    var keyboardActionsOpened = useState(false);
     void hideKeyboardActionsOverlay() {
-      try {
-        keyboardActionsOverlay?.remove();
-      } on AssertionError {
-        // Может быть такое, что оверлея уже нет => прост игнорим это
-      }
+      if (!keyboardActionsOpened.value) return;
+      keyboardActionsOverlay?.remove();
+      keyboardActionsOpened.value = false;
     }
 
     useEffect(() => hideKeyboardActionsOverlay, []);
 
     void showKeyboardActionsOverlay() {
-      hideKeyboardActionsOverlay();
+      print("showKeyboardActionsOverlay");
+      print("keyboardActionsOpened = $keyboardActionsOpened");
+      if (keyboardActionsOpened.value) return;
       keyboardActionsOverlay = OverlayEntry(
         builder: (context) => Positioned(
           width: MediaQuery.of(context).size.width,
@@ -44,8 +48,8 @@ class MarkdownEditor extends HookWidget {
           ),
         ),
       );
-
       Overlay.of(context)!.insert(keyboardActionsOverlay!);
+      keyboardActionsOpened.value = true;
     }
 
     var focus = useFocusNode();
@@ -59,6 +63,12 @@ class MarkdownEditor extends HookWidget {
 
       focusChange(focus.hasFocus);
     });
+
+    // keyboardVisibilityController.onChange.listen((bool visible) {
+    //   if (!visible) {
+    //     hideKeyboardActionsOverlay();
+    //   }
+    // });
 
     // Если прожали перевод строки и пред строка - элемент списка (- / - [ ] / - [x])
     // То прописываем новый элемент списка
@@ -74,7 +84,6 @@ class MarkdownEditor extends HookWidget {
         }
       }
     });
-
 
     textTec.addListener(() {
       change(textTec.text);
