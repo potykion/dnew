@@ -1,6 +1,7 @@
 import 'package:dnew/logic/core/utils/str.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:tuple/tuple.dart';
 
 class KeyboardMarkdownActions extends StatelessWidget {
@@ -136,7 +137,15 @@ class KeyboardMarkdownActions extends StatelessWidget {
               ),
               IconButton(
                 icon: Icon(Icons.image),
-                onPressed: () {},
+                onPressed: () async {
+                  var img = await ImagePicker().getImage(
+                    source: ImageSource.gallery,
+                    imageQuality: 80,
+                  );
+                  if (img != null) {
+                    addMarkdown("![img](${img.path})");
+                  }
+                },
               ),
               IconButton(
                 icon: Icon(Icons.format_quote),
