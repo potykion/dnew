@@ -33,6 +33,9 @@ abstract class DiaryRecord implements _$DiaryRecord, WithId {
     double charWidth = 7,
     double lineHeight = 16,
   ]) {
+    // Если есть картинка, то оверфлоу
+    if (RegExp(r"!\[.*?\]\(.+\)").hasMatch(text)) return true;
+
     // 19 строк = 296 пх
     // 51 символов помещается в одной строке =  368 пх => 8 пх - 1 сим.
     var lines = text.split("\n");

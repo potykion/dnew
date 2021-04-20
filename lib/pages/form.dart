@@ -121,7 +121,7 @@ class DiaryRecordFormPage extends HookWidget {
               ),
             )
           : Padding(
-              padding: EdgeInsets.all(10),
+              padding: EdgeInsets.all(12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
