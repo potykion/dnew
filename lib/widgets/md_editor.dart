@@ -33,9 +33,7 @@ class MarkdownEditor extends HookWidget {
 
     useEffect(() => hideKeyboardActionsOverlay, []);
 
-    void showKeyboardActionsOverlay({
-      bool isSelectionActions = false,
-    }) {
+    void showKeyboardActionsOverlay() {
       hideKeyboardActionsOverlay();
       keyboardActionsOverlay = OverlayEntry(
         builder: (context) => Positioned(
@@ -43,7 +41,6 @@ class MarkdownEditor extends HookWidget {
           bottom: MediaQuery.of(context).viewInsets.bottom,
           child: KeyboardMarkdownActions(
             controller: textTec,
-            isSelectionActions: isSelectionActions,
           ),
         ),
       );
@@ -78,15 +75,6 @@ class MarkdownEditor extends HookWidget {
       }
     });
 
-    // Если выделили текст, то показываем экшены для выделенного теста
-    textTec.addListener(() {
-      if (textTec.selection.baseOffset == -1) return;
-      var textSelected =
-          textTec.selection.baseOffset != textTec.selection.extentOffset;
-      showKeyboardActionsOverlay(
-        isSelectionActions: textSelected,
-      );
-    });
 
     textTec.addListener(() {
       change(textTec.text);
