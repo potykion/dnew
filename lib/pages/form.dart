@@ -22,6 +22,15 @@ class DiaryRecordFormPage extends HookWidget {
       ModalRoute.of(context)!.settings.arguments as DiaryRecord? ??
           DiaryRecord.blank(userId: FirebaseAuth.instance.currentUser!.uid),
     );
+    useEffect(() {
+      WidgetsBinding.instance!.addPostFrameCallback((_) async {
+        record.value = record.value.copyWith(
+          id: await context
+              .read(diaryRecordControllerProvider.notifier)
+              .create(record.value.copyWith(text: record.value.text.trim())),
+        );
+      });
+    });
 
     var showPreview = useState(false);
 
@@ -29,17 +38,9 @@ class DiaryRecordFormPage extends HookWidget {
     save() async {
       isSaving.value = true;
 
-      if (record.value.id != null) {
-        await context
-            .read(diaryRecordControllerProvider.notifier)
-            .update(record.value.copyWith(text: record.value.text.trim()));
-      } else {
-        record.value = record.value.copyWith(
-          id: await context
-              .read(diaryRecordControllerProvider.notifier)
-              .create(record.value.copyWith(text: record.value.text.trim())),
-        );
-      }
+      await context
+          .read(diaryRecordControllerProvider.notifier)
+          .update(record.value.copyWith(text: record.value.text.trim()));
 
       isSaving.value = false;
     }

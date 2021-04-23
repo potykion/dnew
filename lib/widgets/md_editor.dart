@@ -36,8 +36,6 @@ class MarkdownEditor extends HookWidget {
     useEffect(() => hideKeyboardActionsOverlay, []);
 
     void showKeyboardActionsOverlay() {
-      print("showKeyboardActionsOverlay");
-      print("keyboardActionsOpened = $keyboardActionsOpened");
       if (keyboardActionsOpened.value) return;
       keyboardActionsOverlay = OverlayEntry(
         builder: (context) => Positioned(
