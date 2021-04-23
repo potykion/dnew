@@ -1,4 +1,5 @@
 import 'package:dnew/logic/diary/controllers.dart';
+import 'package:dnew/logic/diary/models.dart';
 import 'package:dnew/logic/diary/search/models.dart';
 import 'package:dnew/logic/settings/display_mode/controllers.dart';
 import 'package:dnew/logic/settings/display_mode/models.dart';
@@ -6,6 +7,7 @@ import 'package:dnew/routes.dart';
 import 'package:dnew/widgets/search_appbar.dart';
 import 'package:dnew/widgets/bottom.dart';
 import 'package:dnew/widgets/list.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -54,7 +56,17 @@ class ListPage extends HookWidget {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: () => Navigator.pushNamed(context, Routes.form),
+        onPressed: () async {
+          var record = DiaryRecord.blank(
+            userId: FirebaseAuth.instance.currentUser!.uid,
+          );
+          record = record.copyWith(
+            id: await context
+                .read(diaryRecordControllerProvider.notifier)
+                .create(record),
+          );
+          Navigator.pushNamed(context, Routes.form, arguments: record);
+        },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       bottomNavigationBar: MyBottomNav(),

@@ -43,6 +43,13 @@ class LoadingPage extends HookWidget {
             .read(diaryRecordControllerProvider.notifier)
             .listByUserId(user!.uid);
 
+        var records = context
+            .read(diaryRecordControllerProvider)
+            .where((r) => r.text == "");
+        for (var r in records) {
+          context.read(diaryRepoProvider).deleteById(r.id!);
+        }
+
         Navigator.pushReplacementNamed(context, Routes.list);
       });
     });

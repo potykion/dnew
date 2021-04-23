@@ -22,15 +22,7 @@ class DiaryRecordFormPage extends HookWidget {
       ModalRoute.of(context)!.settings.arguments as DiaryRecord? ??
           DiaryRecord.blank(userId: FirebaseAuth.instance.currentUser!.uid),
     );
-    useEffect(() {
-      WidgetsBinding.instance!.addPostFrameCallback((_) async {
-        record.value = record.value.copyWith(
-          id: await context
-              .read(diaryRecordControllerProvider.notifier)
-              .create(record.value.copyWith(text: record.value.text.trim())),
-        );
-      });
-    });
+
 
     var showPreview = useState(false);
 
