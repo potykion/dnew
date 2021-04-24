@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:dnew/widgets/small_text_btn.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:dnew/logic/core/utils/str.dart';
@@ -8,12 +9,16 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tuple/tuple.dart';
 
-class KeyboardMarkdownActions extends HookWidget {
+class MarkdownToolbar extends HookWidget {
   final TextEditingController controller;
+  final bool showBackBtn;
+  final Function()? onBack;
 
-  const KeyboardMarkdownActions({
+  const MarkdownToolbar({
     Key? key,
     required this.controller,
+    this.showBackBtn = false,
+    this.onBack,
   }) : super(key: key);
 
   void wrapWithMarkdown(String markdown) {
@@ -98,121 +103,86 @@ class KeyboardMarkdownActions extends HookWidget {
       [],
     );
 
-    return Container(
-      height: 50,
-      color: Theme.of(context).canvasColor,
-      child: Material(
-        color: Colors.transparent,
-        child: ListView(
-          // shrinkWrap: true,
-          scrollDirection: Axis.horizontal,
-          children: [
-            if (isSelectionActions.value) ...[
-              IconButton(
-                icon: Icon(Icons.format_bold),
-                onPressed: () => wrapWithMarkdown("**"),
-              ),
-              IconButton(
-                icon: Icon(Icons.format_italic),
-                onPressed: () => wrapWithMarkdown("*"),
-              ),
-              IconButton(
-                icon: Icon(Icons.format_strikethrough),
-                onPressed: () => wrapWithMarkdown("~~"),
-              ),
-              IconButton(
-                icon: Icon(Icons.code),
-                onPressed: () => wrapWithMarkdown("``"),
-              ),
-              IconButton(
-                icon: Icon(Icons.link),
-                onPressed: wrapWithMarkdownLink,
-              ),
-            ] else ...[
-              SmallTextButton(
-                text: "H1",
-                onPressed: () => addMarkdown("#"),
-              ),
-              SmallTextButton(
-                text: "H2",
-                onPressed: () => addMarkdown("##"),
-              ),
-              SmallTextButton(
-                text: "H3",
-                onPressed: () => addMarkdown("###"),
-              ),
-              IconButton(
-                icon: Icon(Icons.list),
-                onPressed: () => addMarkdown("-"),
-              ),
-              IconButton(
-                icon: Icon(Icons.format_list_numbered),
-                onPressed: () => addMarkdown("1."),
-              ),
-              IconButton(
-                icon: Icon(Icons.check_box),
-                onPressed: () => addMarkdown("- [ ]"),
-              ),
-              IconButton(
-                icon: Icon(Icons.image),
-                onPressed: () async {
-                  PickedFile? img = await ImagePicker().getImage(
-                    source: ImageSource.gallery,
-                    imageQuality: 80,
-                  );
+    return ListView(
+      scrollDirection: Axis.horizontal,
+      children: [
+        if (showBackBtn) BackButton(onPressed: onBack),
+        if (isSelectionActions.value) ...[
+          IconButton(
+            icon: Icon(Icons.format_bold),
+            onPressed: () => wrapWithMarkdown("**"),
+          ),
+          IconButton(
+            icon: Icon(Icons.format_italic),
+            onPressed: () => wrapWithMarkdown("*"),
+          ),
+          IconButton(
+            icon: Icon(Icons.format_strikethrough),
+            onPressed: () => wrapWithMarkdown("~~"),
+          ),
+          IconButton(
+            icon: Icon(Icons.code),
+            onPressed: () => wrapWithMarkdown("``"),
+          ),
+          IconButton(
+            icon: Icon(Icons.link),
+            onPressed: wrapWithMarkdownLink,
+          ),
+        ] else ...[
+          SmallTextButton(
+            text: "H1",
+            onPressed: () => addMarkdown("#"),
+          ),
+          SmallTextButton(
+            text: "H2",
+            onPressed: () => addMarkdown("##"),
+          ),
+          SmallTextButton(
+            text: "H3",
+            onPressed: () => addMarkdown("###"),
+          ),
+          IconButton(
+            icon: Icon(Icons.list),
+            onPressed: () => addMarkdown("-"),
+          ),
+          IconButton(
+            icon: Icon(Icons.format_list_numbered),
+            onPressed: () => addMarkdown("1."),
+          ),
+          IconButton(
+            icon: Icon(Icons.check_box),
+            onPressed: () => addMarkdown("- [ ]"),
+          ),
+          IconButton(
+            icon: Icon(Icons.image),
+            onPressed: () async {
+              PickedFile? img = await ImagePicker().getImage(
+                source: ImageSource.gallery,
+                imageQuality: 80,
+              );
 
-                  if (img != null) {
-                    File file = File(img.path);
-                    var filename = img.path.split("/").last;
-                    var ref = firebase_storage.FirebaseStorage.instance.ref(
-                      'uploads/${FirebaseAuth.instance.currentUser!.uid}/$filename',
-                    );
-                    await ref.putFile(file);
-                    var imgUrl = await ref.getDownloadURL();
-                    addMarkdown("![img]($imgUrl)");
-                  }
-                },
-              ),
-              IconButton(
-                icon: Icon(Icons.format_quote),
-                onPressed: () => addMarkdown(">"),
-              ),
-              IconButton(
-                icon: Icon(Icons.code),
-                onPressed: () => addMarkdown("```\n", "```\n"),
-              ),
-            ]
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class SmallTextButton extends StatelessWidget {
-  final String text;
-  final Function() onPressed;
-
-  const SmallTextButton({
-    Key? key,
-    required this.text,
-    required this.onPressed,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 40,
-      child: TextButton(
-        child: Text(
-          text,
-          style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-        ),
-        onPressed: onPressed,
-      ),
+              if (img != null) {
+                File file = File(img.path);
+                var filename = img.path.split("/").last;
+                var ref = firebase_storage.FirebaseStorage.instance.ref(
+                  'uploads/${FirebaseAuth.instance.currentUser!.uid}/$filename',
+                );
+                await ref.putFile(file);
+                var imgUrl = await ref.getDownloadURL();
+                addMarkdown("![img]($imgUrl)");
+              }
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.format_quote),
+            onPressed: () => addMarkdown(">"),
+          ),
+          IconButton(
+            icon: Icon(Icons.code),
+            onPressed: () => addMarkdown("```\n", "```\n"),
+          ),
+        ]
+      ],
     );
   }
 }

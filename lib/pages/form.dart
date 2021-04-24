@@ -4,11 +4,11 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dnew/logic/diary/models.dart';
 import 'package:dnew/logic/diary/controllers.dart';
+import 'package:dnew/widgets/toolbar.dart';
 import 'package:dnew/widgets/md_editor.dart';
 import 'package:dnew/widgets/record.dart';
 import 'package:dnew/widgets/tags.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -18,13 +18,8 @@ import 'package:intl/intl.dart';
 class DiaryRecordFormPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
-    var record = useState(
-      ModalRoute.of(context)!.settings.arguments as DiaryRecord? ??
-          DiaryRecord.blank(userId: FirebaseAuth.instance.currentUser!.uid),
-    );
-
-
-    var showPreview = useState(false);
+    var record =
+        useState(ModalRoute.of(context)!.settings.arguments as DiaryRecord);
 
     var isSaving = useState(false);
     save() async {
@@ -47,7 +42,15 @@ class DiaryRecordFormPage extends HookWidget {
       saveTimer.value = Timer(Duration(milliseconds: 600), save);
     }
 
+    var textTec = useTextEditingController(text: record.value.text);
+    textTec.addListener(() {
+      if (textTec.text == record.value.text) return;
+      record.value = record.value.copyWith(text: textTec.text);
+      saveDebounce();
+    });
     var textFocus = useState(false);
+
+    var showPreview = useState(false);
 
     return Scaffold(
       appBar: AppBar(
@@ -128,35 +131,28 @@ class DiaryRecordFormPage extends HookWidget {
                   Divider(),
                   Expanded(
                     child: MarkdownEditor(
-                      initial: record.value.text,
-                      change: (text) {
-                        if (text == record.value.text) return;
-                        record.value = record.value.copyWith(text: text);
-                        saveDebounce();
-                      },
+                      controller: textTec,
                       focusChange: (focused) {
                         textFocus.value = focused;
                       },
                     ),
                   ),
                   Divider(),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      bottom: textFocus.value
-                          ? 30 // = высота KeyboardMarkdownActions
-                          : 0,
-                    ),
-                    child: TagsInput(
-                      initial: record.value.tags,
-                      change: (tags) {
-                        if (ListEquality<String>()
-                            .equals(tags, record.value.tags)) return;
+                  TagsInput(
+                    initial: record.value.tags,
+                    change: (tags) {
+                      if (ListEquality<String>()
+                          .equals(tags, record.value.tags)) return;
 
-                        record.value = record.value.copyWith(tags: tags);
+                      record.value = record.value.copyWith(tags: tags);
 
-                        saveDebounce();
-                      },
-                    ),
+                      saveDebounce();
+                    },
+                  ),
+                  Divider(),
+                  Toolbar(
+                    textFocused: textFocus.value,
+                    textTec: textTec,
                   ),
                 ],
               ),
