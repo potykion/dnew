@@ -65,7 +65,8 @@ class ListPage extends HookWidget {
                 .read(diaryRecordControllerProvider.notifier)
                 .create(record),
           );
-          Navigator.pushNamed(context, Routes.form, arguments: record);
+          context.read(editableRecordProvider).state = record;
+          Navigator.pushNamed(context, Routes.form);
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,

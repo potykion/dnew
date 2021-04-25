@@ -3,6 +3,7 @@ import 'package:collection/collection.dart';
 import 'package:dnew/logic/diary/db.dart';
 import 'package:dnew/logic/core/utils/dt.dart';
 import 'package:dnew/logic/diary/search/models.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -97,4 +98,10 @@ ProviderFamily<Iterable<String>, String> searchTagsProvider = Provider.family(
   (ref, tagPattern) => ref
       .watch(tagsProvider)
       .where((t) => t.toLowerCase().contains(tagPattern.toLowerCase())),
+);
+
+var editableRecordProvider = StateProvider(
+  (ref) => DiaryRecord.blank(
+    userId: FirebaseAuth.instance.currentUser!.uid,
+  ),
 );

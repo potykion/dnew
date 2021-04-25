@@ -18,8 +18,7 @@ import 'package:intl/intl.dart';
 class DiaryRecordFormPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
-    var record =
-        useState(ModalRoute.of(context)!.settings.arguments as DiaryRecord);
+    var record = useProvider(editableRecordProvider);
 
     var isSaving = useState(false);
     save() async {
@@ -27,7 +26,7 @@ class DiaryRecordFormPage extends HookWidget {
 
       await context
           .read(diaryRecordControllerProvider.notifier)
-          .update(record.value.copyWith(text: record.value.text.trim()));
+          .update(record.state.copyWith(text: record.state.text.trim()));
 
       isSaving.value = false;
     }
@@ -42,10 +41,15 @@ class DiaryRecordFormPage extends HookWidget {
       saveTimer.value = Timer(Duration(milliseconds: 600), save);
     }
 
-    var textTec = useTextEditingController(text: record.value.text);
+    var textTec = useTextEditingController(text: record.state.text);
+    useValueChanged<DiaryRecord, void>(record.state, (_, __) {
+      if (textTec.text == record.state.text) return;
+      textTec.text = record.state.text;
+      saveDebounce();
+    });
     textTec.addListener(() {
-      if (textTec.text == record.value.text) return;
-      record.value = record.value.copyWith(text: textTec.text);
+      if (textTec.text == record.state.text) return;
+      record.state = record.state.copyWith(text: textTec.text);
       saveDebounce();
     });
     var textFocus = useState(false);
@@ -79,39 +83,13 @@ class DiaryRecordFormPage extends HookWidget {
             onPressed: () => showPreview.value = !showPreview.value,
             icon: Icon(showPreview.value ? Icons.edit : Icons.remove_red_eye),
           ),
-          if (record.value.id != null)
-            IconButton(
-                icon: Icon(Icons.delete),
-                onPressed: () async {
-                  if (await _showConfirmDialog(context) ?? false) {
-                    context
-                        .read(diaryRecordControllerProvider.notifier)
-                        .delete(record.value);
-                    Navigator.pop(context);
-                  }
-                }),
-          if (record.value.text == "")
-            IconButton(
-              icon: Icon(Icons.file_download),
-              onPressed: () async {
-                var result = await FilePicker.platform.pickFiles(
-                  allowedExtensions: ["md", "txt"],
-                  type: FileType.custom,
-                );
-                if (result != null) {
-                  var file = File(result.files.single.path!);
-                  record.value =
-                      record.value.copyWith(text: file.readAsStringSync());
-                }
-              },
-            ),
         ].reversed.toList(),
       ),
       body: showPreview.value
           ? Center(
               child: SingleChildScrollView(
                 child: DiaryRecordCard(
-                  record: record.value,
+                  record: record.state,
                   readonly: true,
                 ),
               ),
@@ -124,7 +102,7 @@ class DiaryRecordFormPage extends HookWidget {
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 4),
                     child: Text(
-                      DateFormat.yMd().add_Hms().format(record.value.created),
+                      DateFormat.yMd().add_Hms().format(record.state.created),
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -138,12 +116,12 @@ class DiaryRecordFormPage extends HookWidget {
                     ),
                   ),
                   TagsInput(
-                    initial: record.value.tags,
+                    initial: record.state.tags,
                     change: (tags) {
                       if (ListEquality<String>()
-                          .equals(tags, record.value.tags)) return;
+                          .equals(tags, record.state.tags)) return;
 
-                      record.value = record.value.copyWith(tags: tags);
+                      record.state = record.state.copyWith(tags: tags);
 
                       saveDebounce();
                     },
@@ -158,22 +136,4 @@ class DiaryRecordFormPage extends HookWidget {
             ),
     );
   }
-
-  Future<bool?> _showConfirmDialog(BuildContext context) => showDialog<bool>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text("Удаление записи"),
-          content: Text("Вы хотите удалить запись?"),
-          actions: [
-            TextButton(
-              child: Text("Нет"),
-              onPressed: () => Navigator.pop(context, false),
-            ),
-            TextButton(
-              child: Text("Да"),
-              onPressed: () => Navigator.pop(context, true),
-            ),
-          ],
-        ),
-      );
 }

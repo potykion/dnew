@@ -32,13 +32,15 @@ class DiaryRecordCard extends HookWidget {
 
     return Card(
       child: InkWell(
-        onTap: () => readonly
+        onTap: readonly
             ? null
-            : Navigator.pushNamed(
-                context,
-                Routes.form,
-                arguments: record,
-              ),
+            : () {
+                context.read(editableRecordProvider).state = record;
+                Navigator.pushNamed(
+                  context,
+                  Routes.form,
+                );
+              },
         onLongPress: () {
           Clipboard.setData(ClipboardData(text: record.text));
           final snackBar = SnackBar(content: Text('Запись скопирована.'));
