@@ -58,6 +58,27 @@ class DiaryRecordFormPage extends HookWidget {
 
     return Scaffold(
       appBar: AppBar(
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              onPressed: () => showPreview.value = false,
+              icon: Icon(
+                Icons.edit,
+                color:
+                    !showPreview.value ? Theme.of(context).accentColor : null,
+              ),
+            ),
+            IconButton(
+              onPressed: () => showPreview.value = true,
+              icon: Icon(
+                Icons.remove_red_eye,
+                color: showPreview.value ? Theme.of(context).accentColor : null,
+              ),
+            )
+          ],
+        ),
+        centerTitle: true,
         actions: [
           if (isSaving.value)
             Padding(
@@ -79,10 +100,6 @@ class DiaryRecordFormPage extends HookWidget {
               },
               icon: Icon(Icons.done),
             ),
-          IconButton(
-            onPressed: () => showPreview.value = !showPreview.value,
-            icon: Icon(showPreview.value ? Icons.edit : Icons.remove_red_eye),
-          ),
         ].reversed.toList(),
       ),
       body: showPreview.value
