@@ -137,7 +137,6 @@ class DiaryRecordFormPage extends HookWidget {
                       },
                     ),
                   ),
-                  Divider(),
                   TagsInput(
                     initial: record.value.tags,
                     change: (tags) {
