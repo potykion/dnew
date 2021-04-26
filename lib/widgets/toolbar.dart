@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'md_toolbar.dart';
 
@@ -25,12 +26,15 @@ class Toolbar extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    var state = useState(ToolbarState.initial);
+    var toolbarState = useState(ToolbarState.initial);
     useValueChanged<bool, void>(textFocused, (_, __) {
       if (!textFocused) {
-        state.value = ToolbarState.initial;
+        toolbarState.value = ToolbarState.initial;
       }
     });
+
+    var undoQueue = useProvider(undoQueueProvider);
+    var redoQueue = useProvider(redoQueueProvider);
 
     Widget buildInitialToolbar() {
       return Row(
@@ -40,14 +44,37 @@ class Toolbar extends HookWidget {
             opacity: textFocused ? 1 : 0,
             child: IconButton(
               icon: Icon(Icons.text_fields),
-              onPressed:
-                  textFocused ? () => state.value = ToolbarState.md : null,
+              onPressed: textFocused
+                  ? () => toolbarState.value = ToolbarState.md
+                  : null,
             ),
           ),
           Row(
             children: [
-              IconButton(icon: Icon(Icons.undo), onPressed: null),
-              IconButton(icon: Icon(Icons.redo), onPressed: null),
+              IconButton(
+                  icon: Icon(Icons.undo),
+                  onPressed: undoQueue.isNotEmpty
+                      ? () {
+                          var last = undoQueue.removeLast();
+                          context.read(editableRecordProvider).state = context
+                              .read(editableRecordProvider)
+                              .state
+                              .copyWith(text: last);
+                          redoQueue.add(last);
+                        }
+                      : null),
+              IconButton(
+                  icon: Icon(Icons.redo),
+                  onPressed: redoQueue.isNotEmpty
+                      ? () {
+                          var last = redoQueue.removeLast();
+                          context.read(editableRecordProvider).state = context
+                              .read(editableRecordProvider)
+                              .state
+                              .copyWith(text: last);
+                          undoQueue.add(last);
+                        }
+                      : null),
             ],
           ),
           IconButton(
@@ -71,12 +98,12 @@ class Toolbar extends HookWidget {
 
     return Container(
       height: 40,
-      child: state.value == ToolbarState.initial
+      child: toolbarState.value == ToolbarState.initial
           ? buildInitialToolbar()
           : MarkdownToolbar(
               controller: textTec,
               showBackBtn: true,
-              onBack: () => state.value = ToolbarState.initial,
+              onBack: () => toolbarState.value = ToolbarState.initial,
             ),
     );
   }
@@ -101,7 +128,6 @@ class _ImportMarkdownTile extends StatelessWidget {
               .copyWith(text: file.readAsStringSync());
         }
         Navigator.pop(context);
-
       },
     );
   }

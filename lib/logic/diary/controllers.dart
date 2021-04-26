@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:collection/collection.dart';
 import 'package:dnew/logic/diary/db.dart';
@@ -105,3 +107,7 @@ var editableRecordProvider = StateProvider(
     userId: FirebaseAuth.instance.currentUser!.uid,
   ),
 );
+
+
+var undoQueueProvider = Provider((_) => Queue<String>());
+var redoQueueProvider = Provider((_) => Queue<String>());
