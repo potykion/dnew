@@ -41,14 +41,19 @@ class DiaryRecordFormPage extends HookWidget {
         );
 
     var textTec = useTextEditingController(text: record.state.text);
+    // Выполняется когда импортнули маркдаун
     useValueChanged<DiaryRecord, void>(record.state, (_, __) {
       if (textTec.text == record.state.text) return;
+
       textTec.text = record.state.text;
+
       saveDebounce();
     });
     textTec.addListener(() {
       if (textTec.text == record.state.text) return;
+
       record.state = record.state.copyWith(text: textTec.text);
+
       saveDebounce();
     });
     var textFocus = useState(false);

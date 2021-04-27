@@ -115,10 +115,10 @@ class _ImportMarkdownTile extends StatelessWidget {
         );
         if (result != null) {
           var file = File(result.files.single.path!);
-          context.read(editableRecordProvider).state = context
-              .read(editableRecordProvider)
-              .state
-              .copyWith(text: file.readAsStringSync());
+          var text = file.readAsStringSync();
+          context.read(editableRecordProvider).state =
+              context.read(editableRecordProvider).state.copyWith(text: text);
+          context.read(historyProvider).append(text);
         }
         Navigator.pop(context);
       },
