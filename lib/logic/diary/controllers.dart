@@ -9,6 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import 'history/services.dart';
 import 'models.dart';
 
 class DiaryRecordController extends StateNotifier<List<DiaryRecord>> {
@@ -108,6 +109,4 @@ var editableRecordProvider = StateProvider(
   ),
 );
 
-
-var undoQueueProvider = Provider((_) => Queue<String>());
-var redoQueueProvider = Provider((_) => Queue<String>());
+var historyProvider = Provider((_) => History());

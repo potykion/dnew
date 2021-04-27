@@ -46,12 +46,7 @@ class MarkdownEditor extends HookWidget {
       decoration: InputDecoration(
         hintText: "Что произошло?",
       ),
-      onChanged: (text) {
-        context.read(redoQueueProvider).clear();
-        context
-            .read(undoQueueProvider)
-            .add(context.read(editableRecordProvider).state.text);
-      },
+      onChanged: (text) => context.read(historyProvider).append(text),
     );
   }
 }

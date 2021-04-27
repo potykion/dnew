@@ -33,8 +33,7 @@ class Toolbar extends HookWidget {
       }
     });
 
-    var undoQueue = useProvider(undoQueueProvider);
-    var redoQueue = useProvider(redoQueueProvider);
+    var history = useProvider(historyProvider);
 
     Widget buildInitialToolbar() {
       return Row(
@@ -52,29 +51,23 @@ class Toolbar extends HookWidget {
           Row(
             children: [
               IconButton(
-                  icon: Icon(Icons.undo),
-                  onPressed: undoQueue.isNotEmpty
-                      ? () {
-                          var last = undoQueue.removeLast();
-                          context.read(editableRecordProvider).state = context
-                              .read(editableRecordProvider)
-                              .state
-                              .copyWith(text: last);
-                          redoQueue.add(last);
-                        }
-                      : null),
+                icon: Icon(Icons.undo),
+                onPressed: history.canUndo
+                    ? () => context.read(editableRecordProvider).state = context
+                        .read(editableRecordProvider)
+                        .state
+                        .copyWith(text: history.undo())
+                    : null,
+              ),
               IconButton(
-                  icon: Icon(Icons.redo),
-                  onPressed: redoQueue.isNotEmpty
-                      ? () {
-                          var last = redoQueue.removeLast();
-                          context.read(editableRecordProvider).state = context
-                              .read(editableRecordProvider)
-                              .state
-                              .copyWith(text: last);
-                          undoQueue.add(last);
-                        }
-                      : null),
+                icon: Icon(Icons.redo),
+                onPressed: history.canRedo
+                    ? () => context.read(editableRecordProvider).state = context
+                        .read(editableRecordProvider)
+                        .state
+                        .copyWith(text: history.redo())
+                    : null,
+              ),
             ],
           ),
           IconButton(

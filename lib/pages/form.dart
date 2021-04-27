@@ -20,6 +20,12 @@ class DiaryRecordFormPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     var record = useProvider(editableRecordProvider);
+    useEffect(
+      () {
+        context.read(historyProvider).init(record.state.text);
+      },
+      [],
+    );
 
     var isSaving = useState(false);
     save() async {
