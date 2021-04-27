@@ -1,7 +1,3 @@
-import 'dart:async';
-import 'dart:collection';
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dnew/logic/diary/models.dart';
 import 'package:dnew/logic/diary/controllers.dart';
@@ -9,7 +5,7 @@ import 'package:dnew/widgets/toolbar.dart';
 import 'package:dnew/widgets/md_editor.dart';
 import 'package:dnew/widgets/record.dart';
 import 'package:dnew/widgets/tags.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -38,15 +34,11 @@ class DiaryRecordFormPage extends HookWidget {
       isSaving.value = false;
     }
 
-    var saveTimer = useState<Timer?>(null);
-    useEffect(
-      () => () => saveTimer.value?.cancel(),
-      [],
-    );
-    saveDebounce() {
-      saveTimer.value?.cancel();
-      saveTimer.value = Timer(Duration(milliseconds: 600), save);
-    }
+    saveDebounce() => EasyDebounce.debounce(
+          'save',
+          Duration(milliseconds: 600),
+          save,
+        );
 
     var textTec = useTextEditingController(text: record.state.text);
     useValueChanged<DiaryRecord, void>(record.state, (_, __) {
@@ -101,7 +93,6 @@ class DiaryRecordFormPage extends HookWidget {
           else
             IconButton(
               onPressed: () {
-                saveTimer.value?.cancel();
                 save();
                 Navigator.of(context).pop();
               },

@@ -55,6 +55,8 @@ dependencies:
   flutter_markdown:
     git: https://github.com/potykion/flutter_markdown.git
 
+  easy_debounce: ^2.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
