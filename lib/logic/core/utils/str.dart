@@ -14,6 +14,7 @@ String getLastLine(String str, {int? position}) {
 }
 
 TextSelection getLineSelection(String str, {int? position}) {
+  if (position == -1) return TextSelection(baseOffset: 0, extentOffset: 0);
   var fromNewline =
       str.substring(0, position ?? str.length).lastIndexOf("\n") + 1;
 

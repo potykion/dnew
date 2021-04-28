@@ -4,6 +4,7 @@ import 'package:dnew/logic/diary/search/models.dart';
 import 'package:dnew/logic/settings/display_mode/controllers.dart';
 import 'package:dnew/logic/settings/display_mode/models.dart';
 import 'package:dnew/routes.dart';
+import 'package:dnew/widgets/loading.dart';
 import 'package:dnew/widgets/search_appbar.dart';
 import 'package:dnew/widgets/bottom.dart';
 import 'package:dnew/widgets/list.dart';
@@ -57,6 +58,8 @@ class ListPage extends HookWidget {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () async {
+          var loadingOverlay = showLoadingOverlay(context);
+
           var record = DiaryRecord.blank(
             userId: FirebaseAuth.instance.currentUser!.uid,
           );
@@ -66,6 +69,9 @@ class ListPage extends HookWidget {
                 .create(record),
           );
           context.read(editableRecordProvider).state = record;
+
+          loadingOverlay.remove();
+
           Navigator.pushNamed(context, Routes.form);
         },
       ),

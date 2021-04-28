@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:dnew/widgets/loading.dart';
 import 'package:dnew/widgets/small_text_btn.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -161,6 +162,8 @@ class MarkdownToolbar extends HookWidget {
                 imageQuality: 80,
               );
 
+              var loadingOverlay = showLoadingOverlay(context);
+
               if (img != null) {
                 File file = File(img.path);
                 var filename = img.path.split("/").last;
@@ -171,6 +174,8 @@ class MarkdownToolbar extends HookWidget {
                 var imgUrl = await ref.getDownloadURL();
                 addMarkdown("![img]($imgUrl)");
               }
+
+              loadingOverlay.remove();
             },
           ),
           IconButton(
