@@ -42,6 +42,7 @@ class LoadingPage extends HookWidget {
         await context
             .read(diaryRecordControllerProvider.notifier)
             .listByUserId(user!.uid);
+        print("blya");
 
         var records = context
             .read(diaryRecordControllerProvider)

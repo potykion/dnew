@@ -1,11 +1,9 @@
-import 'package:dnew/logic/settings/display_mode/controllers.dart';
+import 'package:dnew/logic/settings/controllers.dart';
 import 'package:dnew/widgets/bottom.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:dnew/logic/settings/dark_mode/controllers.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPage extends HookWidget {
   @override
@@ -30,15 +28,15 @@ class SettingsPage extends HookWidget {
               style: Theme.of(context).textTheme.button,
             ),
             onTap: () => context
-                .read(displayModeControllerProvider.notifier)
+                .read(appSettingsControllerProvider.notifier)
                 .setNextDisplayMode(),
           ),
           SwitchListTile(
             title: Text("Темная тема"),
             value: isDarkMode,
             onChanged: (_) => context
-                .read(themeModeControllerProvider.notifier)
-                .toggle(isDarkMode),
+                .read(appSettingsControllerProvider.notifier)
+                .toggleDarkMode(),
           ),
         ],
       ),

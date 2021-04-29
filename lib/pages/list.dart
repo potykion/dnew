@@ -1,8 +1,8 @@
 import 'package:dnew/logic/diary/controllers.dart';
 import 'package:dnew/logic/diary/models.dart';
 import 'package:dnew/logic/diary/search/models.dart';
-import 'package:dnew/logic/settings/display_mode/controllers.dart';
-import 'package:dnew/logic/settings/display_mode/models.dart';
+import 'package:dnew/logic/settings/models.dart';
+import 'package:dnew/logic/settings/controllers.dart';
 import 'package:dnew/routes.dart';
 import 'package:dnew/widgets/loading.dart';
 import 'package:dnew/widgets/search_appbar.dart';
@@ -23,7 +23,7 @@ class ListPage extends HookWidget {
     var dailyRecords = useProvider(dailyRecordsProvider(searchQuery));
     var weeklyRecords = useProvider(weeklyRecordsProvider(searchQuery));
 
-    var displayMode = useProvider(displayModeControllerProvider);
+    var displayMode = useProvider(displayModeProvider);
 
     return Scaffold(
       body: CustomScrollView(
