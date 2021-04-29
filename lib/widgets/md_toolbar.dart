@@ -159,7 +159,7 @@ class MarkdownToolbar extends HookWidget {
             onPressed: () async {
               PickedFile? img = await ImagePicker().getImage(
                 source: ImageSource.gallery,
-                imageQuality: 80,
+                imageQuality: 70,
               );
 
               var loadingOverlay = showLoadingOverlay(context);

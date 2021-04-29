@@ -27,7 +27,6 @@ class ListPage extends HookWidget {
 
     return Scaffold(
       body: CustomScrollView(
-        physics: BouncingScrollPhysics(),
         slivers: [
           SearchAppBar(
             searchQuery: searchQuery,
