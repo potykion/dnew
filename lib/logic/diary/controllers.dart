@@ -41,6 +41,13 @@ class DiaryRecordController extends StateNotifier<List<DiaryRecord>> {
     await repo.deleteById(record.id!);
     state = [...state.where((r) => r.id != record.id)];
   }
+
+  Future<void> deleteBlank() async {
+    var blankRecordIds =
+        state.where((r) => r.text == "").map((r) => r.id!).toSet();
+    await Future.wait(blankRecordIds.map(repo.deleteById));
+    state = [...state.where((r) => !blankRecordIds.contains(r.id))];
+  }
 }
 
 var diaryRepoProvider = Provider((_) => FirebaseDiaryRecordRepo(

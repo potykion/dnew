@@ -29,6 +29,12 @@ class AppSettingsController extends StateNotifier<AppSettings> {
 
   Future<void> toggleDarkMode() async =>
       await update(state.copyWith(isDarkMode: !state.isDarkMode));
+
+  Future<void> toggleAutoSave() async =>
+      await update(state.copyWith(autoSave: !state.autoSave));
+
+  Future<void> toggleDeleteBlank() async =>
+      await update(state.copyWith(deleteBlank: !state.deleteBlank));
 }
 
 var appSettingsControllerProvider =
@@ -36,11 +42,10 @@ var appSettingsControllerProvider =
   (ref) => AppSettingsController(),
 );
 
-var isDarkModeProvider =
-    Provider((ref) => ref.watch(appSettingsControllerProvider).isDarkMode);
-
 var themeModeProvider = Provider(
-  (ref) => ref.watch(isDarkModeProvider) ? ThemeMode.dark : ThemeMode.light,
+  (ref) => ref.watch(appSettingsControllerProvider).isDarkMode
+      ? ThemeMode.dark
+      : ThemeMode.light,
 );
 
 var displayModeProvider =

@@ -1,3 +1,4 @@
+import 'package:dnew/logic/settings/controllers.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/cupertino.dart';
@@ -42,13 +43,12 @@ class LoadingPage extends HookWidget {
         await context
             .read(diaryRecordControllerProvider.notifier)
             .listByUserId(user!.uid);
-        print("blya");
 
-        var records = context
-            .read(diaryRecordControllerProvider)
-            .where((r) => r.text == "");
-        for (var r in records) {
-          context.read(diaryRepoProvider).deleteById(r.id!);
+        var settings = context.read(appSettingsControllerProvider);
+        if (settings.deleteBlank) {
+          await context
+              .read(diaryRecordControllerProvider.notifier)
+              .deleteBlank();
         }
 
         Navigator.pushReplacementNamed(context, Routes.list);

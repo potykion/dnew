@@ -9,8 +9,8 @@ class SettingsPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     var displayModeStr = useProvider(displayModeStrProvider);
-    var isDarkMode = useProvider(isDarkModeProvider);
     var user = FirebaseAuth.instance.currentUser!;
+    var settings = useProvider(appSettingsControllerProvider);
 
     return Scaffold(
       body: ListView(
@@ -33,11 +33,25 @@ class SettingsPage extends HookWidget {
           ),
           SwitchListTile(
             title: Text("Темная тема"),
-            value: isDarkMode,
+            value: settings.isDarkMode,
             onChanged: (_) => context
                 .read(appSettingsControllerProvider.notifier)
                 .toggleDarkMode(),
           ),
+          SwitchListTile(
+            title: Text("Автосохранение"),
+            value: settings.autoSave,
+            onChanged: (_) => context
+                .read(appSettingsControllerProvider.notifier)
+                .toggleAutoSave(),
+          ),
+          SwitchListTile(
+            title: Text("Удалять пустые записи при запуске"),
+            value: settings.deleteBlank,
+            onChanged: (_) => context
+                .read(appSettingsControllerProvider.notifier)
+                .toggleDeleteBlank(),
+          )
         ],
       ),
       bottomNavigationBar: MyBottomNav(),

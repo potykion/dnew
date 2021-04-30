@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dnew/logic/diary/models.dart';
 import 'package:dnew/logic/diary/controllers.dart';
+import 'package:dnew/logic/settings/controllers.dart';
 import 'package:dnew/widgets/toolbar.dart';
 import 'package:dnew/widgets/md_editor.dart';
 import 'package:dnew/widgets/record.dart';
@@ -15,6 +16,8 @@ import 'package:intl/intl.dart';
 class DiaryRecordFormPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
+    var settings = useProvider(appSettingsControllerProvider);
+
     var record = useProvider(editableRecordProvider);
     useEffect(
       () {
@@ -37,7 +40,11 @@ class DiaryRecordFormPage extends HookWidget {
     saveDebounce() => EasyDebounce.debounce(
           'save',
           Duration(milliseconds: 600),
-          save,
+          () {
+            if (settings.autoSave) {
+              save();
+            }
+          },
         );
 
     var textTec = useTextEditingController(text: record.state.text);
