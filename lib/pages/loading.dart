@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:dnew/logic/settings/controllers.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dnew/logic/diary/controllers.dart';
 import 'package:dnew/routes.dart';
@@ -23,9 +26,13 @@ class LoadingPage extends HookWidget {
         await Firebase.initializeApp();
 
         var deviceInfo = DeviceInfoPlugin();
-        var androidInfo = await deviceInfo.androidInfo;
 
-        if (!androidInfo.isPhysicalDevice) {
+        AndroidDeviceInfo? androidInfo;
+        if (!kIsWeb && Platform.isAndroid) {
+          androidInfo = await deviceInfo.androidInfo;
+        }
+
+        if (!(androidInfo?.isPhysicalDevice ?? true)) {
           await FirebaseCrashlytics.instance
               .setCrashlyticsCollectionEnabled(false);
         } else {

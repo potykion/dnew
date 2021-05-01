@@ -29,7 +29,6 @@ class MyApp extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("MyApp");
     var themeMode = useProvider(themeModeProvider);
 
     return MaterialApp(
