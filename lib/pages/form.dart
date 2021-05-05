@@ -42,7 +42,13 @@ class DiaryRecordFormPage extends HookWidget {
           Duration(milliseconds: 600),
           () {
             if (settings.autoSave) {
-              save();
+              try {
+                save();
+              } on FlutterError {
+                /// сейв может происходить когда нажали галочку =>
+                /// то есть происходит диспоуз, а save обновляет стейт =>
+                /// игнорим ошибку обновления стейта
+              }
             }
           },
         );
@@ -65,7 +71,20 @@ class DiaryRecordFormPage extends HookWidget {
     });
     var textFocus = useState(false);
 
-    var showPreview = useState(false);
+    var isEdit = useState(true);
+    var pageController = useMemoized(() => PageController());
+    useEffect(() {
+      var updateIsEdit = () => isEdit.value = pageController.page == 0;
+      pageController.addListener(updateIsEdit);
+      return () => pageController.removeListener(updateIsEdit);
+    }, []);
+    setEdit() {
+      pageController.jumpToPage(0);
+    }
+
+    setPreview() {
+      pageController.jumpToPage(1);
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -73,18 +92,17 @@ class DiaryRecordFormPage extends HookWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-              onPressed: () => showPreview.value = false,
+              onPressed: setEdit,
               icon: Icon(
                 Icons.edit,
-                color:
-                    !showPreview.value ? Theme.of(context).accentColor : null,
+                color: isEdit.value ? Theme.of(context).accentColor : null,
               ),
             ),
             IconButton(
-              onPressed: () => showPreview.value = true,
+              onPressed: setPreview,
               icon: Icon(
                 Icons.remove_red_eye,
-                color: showPreview.value ? Theme.of(context).accentColor : null,
+                color: !isEdit.value ? Theme.of(context).accentColor : null,
               ),
             )
           ],
@@ -112,55 +130,59 @@ class DiaryRecordFormPage extends HookWidget {
             ),
         ].reversed.toList(),
       ),
-      body: showPreview.value
-          ? Center(
-              child: SingleChildScrollView(
-                child: DiaryRecordCard(
-                  record: record.state,
-                  readonly: true,
+      body: PageView(
+        controller: pageController,
+        children: [
+          Padding(
+            padding: EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 4),
+                  child: Text(
+                    DateFormat.yMd().add_Hms().format(record.state.created),
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ),
-              ),
-            )
-          : Padding(
-              padding: EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 4),
-                    child: Text(
-                      DateFormat.yMd().add_Hms().format(record.state.created),
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Divider(),
-                  Expanded(
-                    child: MarkdownEditor(
-                      controller: textTec,
-                      focusChange: (focused) {
-                        textFocus.value = focused;
-                      },
-                    ),
-                  ),
-                  TagsInput(
-                    initial: record.state.tags,
-                    change: (tags) {
-                      if (ListEquality<String>()
-                          .equals(tags, record.state.tags)) return;
-
-                      record.state = record.state.copyWith(tags: tags);
-
-                      saveDebounce();
+                Divider(),
+                Expanded(
+                  child: MarkdownEditor(
+                    controller: textTec,
+                    focusChange: (focused) {
+                      textFocus.value = focused;
                     },
                   ),
-                  Divider(),
-                  Toolbar(
-                    textFocused: textFocus.value,
-                    textTec: textTec,
-                  ),
-                ],
+                ),
+                TagsInput(
+                  initial: record.state.tags,
+                  change: (tags) {
+                    if (ListEquality<String>().equals(tags, record.state.tags))
+                      return;
+
+                    record.state = record.state.copyWith(tags: tags);
+
+                    saveDebounce();
+                  },
+                ),
+                Divider(),
+                Toolbar(
+                  textFocused: textFocus.value,
+                  textTec: textTec,
+                ),
+              ],
+            ),
+          ),
+          Center(
+            child: SingleChildScrollView(
+              child: DiaryRecordCard(
+                record: record.state,
+                readonly: true,
               ),
             ),
+          ),
+        ],
+      ),
     );
   }
 }
