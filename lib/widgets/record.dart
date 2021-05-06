@@ -53,30 +53,23 @@ class DiaryRecordCard extends HookWidget {
             children: [
               buildDateAndFav(context),
               Divider(),
-              Stack(
-                children: [
-                  if (viewFull.value)
-                    buildText(context, withSpace: true)
-                  else
-                    ConstrainedBox(
-                      constraints: BoxConstraints(maxHeight: 300),
-                      child: buildText(context),
+              if (viewFull.value)
+                buildText(context, withSpace: true)
+              else
+                ConstrainedBox(
+                  constraints: BoxConstraints(maxHeight: 300),
+                  child: buildText(context),
+                ),
+              if (record.isTextOverflow(MediaQuery.of(context).size.width))
+                TextButton(
+                  onPressed: () => viewFull.value = !viewFull.value,
+                  child: Text(
+                    viewFull.value ? "Свернуть" : "Развернуть",
+                    style: TextStyle(
+                      color: Theme.of(context).buttonColor,
                     ),
-                  if (record.isTextOverflow(MediaQuery.of(context).size.width))
-                    Positioned(
-                      child: FloatingActionButton(
-                        heroTag: null,
-                        mini: true,
-                        child: Icon(
-                          viewFull.value ? Icons.compress : Icons.expand,
-                        ),
-                        onPressed: () => viewFull.value = !viewFull.value,
-                      ),
-                      bottom: 0,
-                      right: 0,
-                    )
-                ],
-              )
+                  ),
+                ),
             ],
           ),
         ),
