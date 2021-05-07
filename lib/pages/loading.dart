@@ -47,9 +47,9 @@ class LoadingPage extends HookWidget {
           return;
         }
 
-        await context
-            .read(diaryRecordControllerProvider.notifier)
-            .listByUserId(user!.uid);
+        // await context
+        //     .read(diaryRecordControllerProvider.notifier)
+        //     .listByUserId(user!.uid);
 
         var settings = context.read(appSettingsControllerProvider);
         if (settings.deleteBlank) {

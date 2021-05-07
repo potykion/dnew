@@ -31,18 +31,18 @@ class ListPage extends HookWidget {
           SearchAppBar(
             searchQuery: searchQuery,
           ),
-          if (records.isEmpty)
-            SliverToBoxAdapter(
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height -
-                    (kToolbarHeight + 10) -
-                    kBottomNavigationBarHeight -
-                    MediaQuery.of(context).padding.top,
-                child: Center(
-                  child: Text("Записи не найдены"),
-                ),
-              ),
-            ),
+          // if (records.isEmpty)
+          //   SliverToBoxAdapter(
+          //     child: SizedBox(
+          //       height: MediaQuery.of(context).size.height -
+          //           (kToolbarHeight + 10) -
+          //           kBottomNavigationBarHeight -
+          //           MediaQuery.of(context).padding.top,
+          //       child: Center(
+          //         child: Text("Записи не найдены"),
+          //       ),
+          //     ),
+          //   ),
           if (displayMode == DiaryRecordDisplayMode.list)
             DiaryRecordList(records: records),
           if (displayMode == DiaryRecordDisplayMode.day)

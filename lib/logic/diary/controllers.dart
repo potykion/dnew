@@ -50,9 +50,6 @@ class DiaryRecordController extends StateNotifier<List<DiaryRecord>> {
   }
 }
 
-var diaryRepoProvider = Provider((_) => FirebaseDiaryRecordRepo(
-      FirebaseFirestore.instance.collection("FirebaseDiaryRecordRepo"),
-    ));
 
 var diaryRecordControllerProvider =
     StateNotifierProvider<DiaryRecordController, List<DiaryRecord>>(

@@ -1,5 +1,6 @@
 import 'package:meta/meta.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tuple/tuple.dart';
 import 'models.dart';
 
 /// Создает Firebase батч - типа транзакция
@@ -41,7 +42,7 @@ abstract class FirebaseRepo<T extends WithId> {
   Future<T> get(String id) async =>
       entityFromFirebase((await collectionReference.doc(id).get()));
 
-  /// Получает все сущности из фаерстор
+  /// Получает все сущности из фаерстор с фильтрацией по юзер айди
   Future<List<T>> listByUserId(String userId) async =>
       (await collectionReference.where("userId", isEqualTo: userId).get())
           .docs
