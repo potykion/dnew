@@ -55,11 +55,14 @@ class ListPage extends HookWidget {
     );
 
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SearchAppBar(searchQuery: searchQuery),
-          DiaryRecordList(controller: pagingController),
-        ],
+      body: RefreshIndicator(
+        onRefresh: () async => pagingController.refresh(),
+        child: CustomScrollView(
+          slivers: [
+            SearchAppBar(searchQuery: searchQuery),
+            DiaryRecordList(controller: pagingController),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
@@ -78,7 +81,9 @@ class ListPage extends HookWidget {
 
           loadingOverlay.remove();
 
-          Navigator.pushNamed(context, Routes.form);
+          await Navigator.pushNamed(context, Routes.form);
+
+          pagingController.refresh();
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,

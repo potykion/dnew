@@ -18,12 +18,14 @@ class DiaryRecordCard extends HookWidget {
   final DiaryRecord record;
   final bool showDate;
   final bool readonly;
+  final void Function()? onEdit;
 
   DiaryRecordCard({
     Key? key,
     required this.record,
     this.showDate = true,
     this.readonly = false,
+    this.onEdit,
   }) : super(key: key);
 
   @override
@@ -34,12 +36,10 @@ class DiaryRecordCard extends HookWidget {
       child: InkWell(
         onTap: readonly
             ? null
-            : () {
+            : () async {
                 context.read(editableRecordProvider).state = record;
-                Navigator.pushNamed(
-                  context,
-                  Routes.form,
-                );
+                await Navigator.pushNamed(context, Routes.form);
+                if (onEdit != null) onEdit!();
               },
         onLongPress: () {
           Clipboard.setData(ClipboardData(text: record.text));

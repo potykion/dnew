@@ -19,12 +19,14 @@ class DiaryRecordList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => PagedSliverList<int, DiaryRecord>(
-    pagingController: controller,
-    builderDelegate: PagedChildBuilderDelegate<DiaryRecord>(
-      itemBuilder: (context, item, index) =>
-          DiaryRecordCard(record: item),
-    ),
-  );
+        pagingController: controller,
+        builderDelegate: PagedChildBuilderDelegate<DiaryRecord>(
+          itemBuilder: (context, item, index) => DiaryRecordCard(
+            record: item,
+            onEdit: controller.refresh,
+          ),
+        ),
+      );
 }
 
 class GroupedDiaryRecordList extends HookWidget {

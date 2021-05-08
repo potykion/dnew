@@ -122,8 +122,8 @@ class DiaryRecordFormPage extends HookWidget {
             )
           else
             IconButton(
-              onPressed: () {
-                save();
+              onPressed: () async {
+                await save();
                 Navigator.of(context).pop();
               },
               icon: Icon(Icons.done),

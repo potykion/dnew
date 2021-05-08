@@ -134,7 +134,7 @@ class _DeleteRecordTile extends StatelessWidget {
         title: Text("Удалить"),
         onTap: () async {
           if (await _showConfirmDialog(context) ?? false) {
-            context
+            await context
                 .read(diaryRecordControllerProvider.notifier)
                 .delete(context.read(editableRecordProvider).state);
             Navigator.pop(context);
