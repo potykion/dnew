@@ -24,9 +24,6 @@ class AppSettingsController extends StateNotifier<AppSettings> {
     state = settings;
   }
 
-  Future<void> setNextDisplayMode() async =>
-      await update(state.copyWith(displayMode: state.getNextDisplayMode()));
-
   Future<void> toggleDarkMode() async =>
       await update(state.copyWith(isDarkMode: !state.isDarkMode));
 
@@ -47,17 +44,3 @@ var themeModeProvider = Provider(
       ? ThemeMode.dark
       : ThemeMode.light,
 );
-
-var displayModeProvider =
-    Provider((ref) => ref.watch(appSettingsControllerProvider).displayMode);
-
-var displayModeStrProvider = Provider<String>((ref) {
-  switch (ref.watch(displayModeProvider)) {
-    case DiaryRecordDisplayMode.list:
-      return "Списком";
-    case DiaryRecordDisplayMode.day:
-      return "По дням";
-    case DiaryRecordDisplayMode.week:
-      return "По неделям";
-  }
-});

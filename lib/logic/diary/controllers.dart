@@ -94,28 +94,6 @@ ProviderFamily<List<DiaryRecord>, SearchQuery> diaryRecordListProvider =
       .toList()
         ..sort((r1, r2) => -r1.created.compareTo(r2.created)),
 );
-ProviderFamily<Map<String, List<DiaryRecord>>, SearchQuery>
-    dailyRecordsProvider = Provider.family((ref, tag) {
-  return groupBy<DiaryRecord, String>(
-    ref.watch(diaryRecordListProvider(tag)),
-    (r) {
-      var recordCreatedDate = r.created.date();
-      return DateFormat.yMd().format(recordCreatedDate);
-    },
-  );
-});
-ProviderFamily<Map<String, List<DiaryRecord>>, SearchQuery>
-    weeklyRecordsProvider = Provider.family((ref, tag) {
-  return groupBy<DiaryRecord, String>(
-    ref.watch(diaryRecordListProvider(tag)),
-    (r) {
-      var recordWeek = DateRange.withinWeek(r.created);
-      var fromDateStr = DateFormat.yMd().format(recordWeek.from);
-      var toDateStr = DateFormat.yMd().format(recordWeek.to);
-      return "$fromDateStr - $toDateStr";
-    },
-  );
-});
 
 var tagsProvider = Provider(
   (ref) => ref

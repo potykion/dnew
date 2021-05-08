@@ -20,10 +20,6 @@ class ListPage extends HookWidget {
     var searchQuery =
         (ModalRoute.of(context)!.settings.arguments as SearchQuery?) ??
             SearchQuery.text();
-    // var records = useProvider(diaryRecordListProvider(searchQuery));
-    // var dailyRecords = useProvider(dailyRecordsProvider(searchQuery));
-    // var weeklyRecords = useProvider(weeklyRecordsProvider(searchQuery));
-    // var displayMode = useProvider(displayModeProvider);
 
     var pagingController = useMemoized(
       () => PagingController<int, DiaryRecord>(firstPageKey: 0),

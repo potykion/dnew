@@ -23,13 +23,11 @@ class _$AppSettingsTearOff {
   _AppSettings call(
       {required bool isDarkMode,
       required bool deleteBlank,
-      required bool autoSave,
-      required DiaryRecordDisplayMode displayMode}) {
+      required bool autoSave}) {
     return _AppSettings(
       isDarkMode: isDarkMode,
       deleteBlank: deleteBlank,
       autoSave: autoSave,
-      displayMode: displayMode,
     );
   }
 
@@ -46,7 +44,6 @@ mixin _$AppSettings {
   bool get isDarkMode => throw _privateConstructorUsedError;
   bool get deleteBlank => throw _privateConstructorUsedError;
   bool get autoSave => throw _privateConstructorUsedError;
-  DiaryRecordDisplayMode get displayMode => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -59,11 +56,7 @@ abstract class $AppSettingsCopyWith<$Res> {
   factory $AppSettingsCopyWith(
           AppSettings value, $Res Function(AppSettings) then) =
       _$AppSettingsCopyWithImpl<$Res>;
-  $Res call(
-      {bool isDarkMode,
-      bool deleteBlank,
-      bool autoSave,
-      DiaryRecordDisplayMode displayMode});
+  $Res call({bool isDarkMode, bool deleteBlank, bool autoSave});
 }
 
 /// @nodoc
@@ -79,7 +72,6 @@ class _$AppSettingsCopyWithImpl<$Res> implements $AppSettingsCopyWith<$Res> {
     Object? isDarkMode = freezed,
     Object? deleteBlank = freezed,
     Object? autoSave = freezed,
-    Object? displayMode = freezed,
   }) {
     return _then(_value.copyWith(
       isDarkMode: isDarkMode == freezed
@@ -94,10 +86,6 @@ class _$AppSettingsCopyWithImpl<$Res> implements $AppSettingsCopyWith<$Res> {
           ? _value.autoSave
           : autoSave // ignore: cast_nullable_to_non_nullable
               as bool,
-      displayMode: displayMode == freezed
-          ? _value.displayMode
-          : displayMode // ignore: cast_nullable_to_non_nullable
-              as DiaryRecordDisplayMode,
     ));
   }
 }
@@ -109,11 +97,7 @@ abstract class _$AppSettingsCopyWith<$Res>
           _AppSettings value, $Res Function(_AppSettings) then) =
       __$AppSettingsCopyWithImpl<$Res>;
   @override
-  $Res call(
-      {bool isDarkMode,
-      bool deleteBlank,
-      bool autoSave,
-      DiaryRecordDisplayMode displayMode});
+  $Res call({bool isDarkMode, bool deleteBlank, bool autoSave});
 }
 
 /// @nodoc
@@ -131,7 +115,6 @@ class __$AppSettingsCopyWithImpl<$Res> extends _$AppSettingsCopyWithImpl<$Res>
     Object? isDarkMode = freezed,
     Object? deleteBlank = freezed,
     Object? autoSave = freezed,
-    Object? displayMode = freezed,
   }) {
     return _then(_AppSettings(
       isDarkMode: isDarkMode == freezed
@@ -146,10 +129,6 @@ class __$AppSettingsCopyWithImpl<$Res> extends _$AppSettingsCopyWithImpl<$Res>
           ? _value.autoSave
           : autoSave // ignore: cast_nullable_to_non_nullable
               as bool,
-      displayMode: displayMode == freezed
-          ? _value.displayMode
-          : displayMode // ignore: cast_nullable_to_non_nullable
-              as DiaryRecordDisplayMode,
     ));
   }
 }
@@ -161,8 +140,7 @@ class _$_AppSettings extends _AppSettings {
   const _$_AppSettings(
       {required this.isDarkMode,
       required this.deleteBlank,
-      required this.autoSave,
-      required this.displayMode})
+      required this.autoSave})
       : super._();
 
   factory _$_AppSettings.fromJson(Map<String, dynamic> json) =>
@@ -174,12 +152,10 @@ class _$_AppSettings extends _AppSettings {
   final bool deleteBlank;
   @override
   final bool autoSave;
-  @override
-  final DiaryRecordDisplayMode displayMode;
 
   @override
   String toString() {
-    return 'AppSettings(isDarkMode: $isDarkMode, deleteBlank: $deleteBlank, autoSave: $autoSave, displayMode: $displayMode)';
+    return 'AppSettings(isDarkMode: $isDarkMode, deleteBlank: $deleteBlank, autoSave: $autoSave)';
   }
 
   @override
@@ -194,10 +170,7 @@ class _$_AppSettings extends _AppSettings {
                     .equals(other.deleteBlank, deleteBlank)) &&
             (identical(other.autoSave, autoSave) ||
                 const DeepCollectionEquality()
-                    .equals(other.autoSave, autoSave)) &&
-            (identical(other.displayMode, displayMode) ||
-                const DeepCollectionEquality()
-                    .equals(other.displayMode, displayMode)));
+                    .equals(other.autoSave, autoSave)));
   }
 
   @override
@@ -205,8 +178,7 @@ class _$_AppSettings extends _AppSettings {
       runtimeType.hashCode ^
       const DeepCollectionEquality().hash(isDarkMode) ^
       const DeepCollectionEquality().hash(deleteBlank) ^
-      const DeepCollectionEquality().hash(autoSave) ^
-      const DeepCollectionEquality().hash(displayMode);
+      const DeepCollectionEquality().hash(autoSave);
 
   @JsonKey(ignore: true)
   @override
@@ -223,8 +195,7 @@ abstract class _AppSettings extends AppSettings {
   const factory _AppSettings(
       {required bool isDarkMode,
       required bool deleteBlank,
-      required bool autoSave,
-      required DiaryRecordDisplayMode displayMode}) = _$_AppSettings;
+      required bool autoSave}) = _$_AppSettings;
   const _AppSettings._() : super._();
 
   factory _AppSettings.fromJson(Map<String, dynamic> json) =
@@ -236,8 +207,6 @@ abstract class _AppSettings extends AppSettings {
   bool get deleteBlank => throw _privateConstructorUsedError;
   @override
   bool get autoSave => throw _privateConstructorUsedError;
-  @override
-  DiaryRecordDisplayMode get displayMode => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
   _$AppSettingsCopyWith<_AppSettings> get copyWith =>

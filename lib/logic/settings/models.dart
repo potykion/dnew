@@ -4,8 +4,6 @@ part 'models.freezed.dart';
 
 part 'models.g.dart';
 
-enum DiaryRecordDisplayMode { list, day, week }
-
 @freezed
 class AppSettings with _$AppSettings {
   const AppSettings._();
@@ -14,7 +12,6 @@ class AppSettings with _$AppSettings {
     required bool isDarkMode,
     required bool deleteBlank,
     required bool autoSave,
-    required DiaryRecordDisplayMode displayMode,
   }) = _AppSettings;
 
   factory AppSettings.fromJson(Map<String, dynamic> json) =>
@@ -25,13 +22,6 @@ class AppSettings with _$AppSettings {
       isDarkMode: true,
       deleteBlank: false,
       autoSave: false,
-      displayMode: DiaryRecordDisplayMode.list,
     );
-  }
-
-  DiaryRecordDisplayMode getNextDisplayMode() {
-    var nextIndex =
-        (displayMode.index + 1) % DiaryRecordDisplayMode.values.length;
-    return DiaryRecordDisplayMode.values[nextIndex];
   }
 }
