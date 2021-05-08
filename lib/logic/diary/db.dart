@@ -25,21 +25,21 @@ class FirebaseDiaryRecordRepo extends FirebaseRepo<DiaryRecord> {
   Map<String, dynamic> entityToFirebase(DiaryRecord entity) =>
       entity.toJson()..["created"] = Timestamp.fromDate(entity.created);
 
-  Future<Tuple2<List<DiaryRecord>, DocumentSnapshot>> listByUserIdPaginated(
+  Future<List<DiaryRecord>> listByUserIdPaginated(
     String userId, {
-    int limit = 20,
-    DocumentSnapshot? from,
+    int limit = 10,
+    DateTime? fromCreated,
   }) async {
     var query = await collectionReference
         .where("userId", isEqualTo: userId)
         .orderBy("created", descending: true)
         .limit(limit);
-    if (from != null) {
-      query = query.startAfterDocument(from);
+    if (fromCreated != null) {
+      query = query.startAfter(<Timestamp>[Timestamp.fromDate(fromCreated)]);
     }
 
     var docs = (await query.get()).docs;
-    return Tuple2(docs.map(entityFromFirebase).toList(), docs.last);
+    return docs.map(entityFromFirebase).toList();
   }
 }
 

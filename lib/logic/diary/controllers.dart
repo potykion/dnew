@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:collection/collection.dart';
@@ -8,28 +9,50 @@ import 'package:dnew/logic/diary/search/models.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:tuple/tuple.dart';
 
 import 'history/services.dart';
 import 'models.dart';
 
 class DiaryRecordController extends StateNotifier<List<DiaryRecord>> {
+  final String userId;
   final FirebaseDiaryRecordRepo repo;
 
-  DiaryRecordController(this.repo) : super([]);
+  DiaryRecordController({
+    required this.repo,
+    required this.userId,
+  }) : super([]);
 
   Future<String> create(DiaryRecord record) async {
     var id = await repo.insert(record);
-    state = [...state, record.copyWith(id: id)];
+    state = [record.copyWith(id: id), ...state];
     return id;
   }
 
-  Future<void> listByUserId(String userId) async {
-    state = await repo.listByUserId(userId);
+  Future<List<DiaryRecord>> getPage({int from = 0, int limit = 10}) async {
+    late List<DiaryRecord> items;
+
+    if (state.length >= from + limit) {
+      items = state.sublist(from, from + limit);
+      if (items.length == limit) return items;
+    }
+
+    var fromCreated = state.lastOrNull?.created;
+    var fromItems = await repo.listByUserIdPaginated(
+      userId,
+      limit: limit,
+      fromCreated: fromCreated,
+    );
+
+    state = [...state, ...fromItems];
+    items = state.sublist(from, min(state.length, from + limit));
+    return items;
   }
 
   Future<void> update(DiaryRecord record) async {
     await repo.update(record);
-    state = [...state.where((r) => r.id != record.id), record];
+    state = [...state.where((r) => r.id != record.id), record]
+      ..sort((r1, r2) => -r1.created.compareTo(r2.created));
   }
 
   Future<void> toggleFavourite(DiaryRecord record) async {
@@ -50,10 +73,12 @@ class DiaryRecordController extends StateNotifier<List<DiaryRecord>> {
   }
 }
 
-
 var diaryRecordControllerProvider =
     StateNotifierProvider<DiaryRecordController, List<DiaryRecord>>(
-  (ref) => DiaryRecordController(ref.watch(diaryRepoProvider)),
+  (ref) => DiaryRecordController(
+    userId: FirebaseAuth.instance.currentUser!.uid,
+    repo: ref.watch(diaryRepoProvider),
+  ),
 );
 
 ProviderFamily<List<DiaryRecord>, SearchQuery> diaryRecordListProvider =

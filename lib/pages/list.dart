@@ -12,6 +12,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class ListPage extends HookWidget {
   @override
@@ -19,39 +20,45 @@ class ListPage extends HookWidget {
     var searchQuery =
         (ModalRoute.of(context)!.settings.arguments as SearchQuery?) ??
             SearchQuery.text();
-    var records = useProvider(diaryRecordListProvider(searchQuery));
-    var dailyRecords = useProvider(dailyRecordsProvider(searchQuery));
-    var weeklyRecords = useProvider(weeklyRecordsProvider(searchQuery));
+    // var records = useProvider(diaryRecordListProvider(searchQuery));
+    // var dailyRecords = useProvider(dailyRecordsProvider(searchQuery));
+    // var weeklyRecords = useProvider(weeklyRecordsProvider(searchQuery));
+    // var displayMode = useProvider(displayModeProvider);
 
-    var displayMode = useProvider(displayModeProvider);
+    var pagingController = useMemoized(
+      () => PagingController<int, DiaryRecord>(firstPageKey: 0),
+    );
+    useEffect(
+      () {
+        Future<void> fetchPage(int pageKey) async {
+          try {
+            final items = await context
+                .read(diaryRecordControllerProvider.notifier)
+                .getPage(from: pageKey, limit: 10);
+            var isLastPage = items.length < 10;
+            var nextPageKey = pageKey + 10;
+
+            if (isLastPage) {
+              pagingController.appendLastPage(items);
+            } else {
+              pagingController.appendPage(items, nextPageKey);
+            }
+          } catch (error) {
+            pagingController.error = error;
+          }
+        }
+
+        pagingController.addPageRequestListener(fetchPage);
+        return pagingController.dispose;
+      },
+      [],
+    );
 
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          SearchAppBar(
-            searchQuery: searchQuery,
-          ),
-          // if (records.isEmpty)
-          //   SliverToBoxAdapter(
-          //     child: SizedBox(
-          //       height: MediaQuery.of(context).size.height -
-          //           (kToolbarHeight + 10) -
-          //           kBottomNavigationBarHeight -
-          //           MediaQuery.of(context).padding.top,
-          //       child: Center(
-          //         child: Text("Записи не найдены"),
-          //       ),
-          //     ),
-          //   ),
-          if (displayMode == DiaryRecordDisplayMode.list)
-            DiaryRecordList(records: records),
-          if (displayMode == DiaryRecordDisplayMode.day)
-            GroupedDiaryRecordList(
-              groupedRecords: dailyRecords,
-              showDate: false,
-            ),
-          if (displayMode == DiaryRecordDisplayMode.week)
-            GroupedDiaryRecordList(groupedRecords: weeklyRecords),
+          SearchAppBar(searchQuery: searchQuery),
+          DiaryRecordList(controller: pagingController),
         ],
       ),
       floatingActionButton: FloatingActionButton(
