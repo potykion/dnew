@@ -123,25 +123,29 @@ class DiaryRecordCard extends HookWidget {
           ),
         ),
         if (record.tags.isNotEmpty)
-          RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(text: "\n"),
-                for (var tag in record.tags) ...[
-                  TextSpan(
-                    text: tag,
-                    style: Theme.of(context).textTheme.button,
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () => Navigator.pushNamed(
-                            context,
-                            Routes.list,
-                            arguments: SearchQuery.tag(tag),
-                          ),
-                  ),
-                  TextSpan(text: " "),
-                ]
-              ],
-            ),
+          Row(
+            children: [
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(text: "\n"),
+                    for (var tag in record.tags) ...[
+                      TextSpan(
+                        text: tag,
+                        style: Theme.of(context).textTheme.button,
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => Navigator.pushNamed(
+                                context,
+                                Routes.list,
+                                arguments: SearchQuery.tag(tag),
+                              ),
+                      ),
+                      TextSpan(text: " "),
+                    ]
+                  ],
+                ),
+              ),
+            ],
           ),
         if (withSpace)
           SizedBox(
