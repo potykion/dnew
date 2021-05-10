@@ -6,6 +6,7 @@ import 'package:dnew/widgets/toolbar.dart';
 import 'package:dnew/widgets/md_editor.dart';
 import 'package:dnew/widgets/record.dart';
 import 'package:dnew/widgets/tags.dart';
+import 'package:dnew/widgets/web_padding.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -86,102 +87,104 @@ class DiaryRecordFormPage extends HookWidget {
       pageController.jumpToPage(1);
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              onPressed: setEdit,
-              icon: Icon(
-                Icons.edit,
-                color: isEdit.value ? Theme.of(context).accentColor : null,
-              ),
-            ),
-            IconButton(
-              onPressed: setPreview,
-              icon: Icon(
-                Icons.remove_red_eye,
-                color: !isEdit.value ? Theme.of(context).accentColor : null,
-              ),
-            )
-          ],
-        ),
-        centerTitle: true,
-        actions: [
-          if (isSaving.value)
-            Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: Center(
-                child: Container(
-                  child: CircularProgressIndicator(),
-                  width: 20,
-                  height: 20,
+    return WebPadding(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                onPressed: setEdit,
+                icon: Icon(
+                  Icons.edit,
+                  color: isEdit.value ? Theme.of(context).accentColor : null,
                 ),
               ),
-            )
-          else
-            IconButton(
-              onPressed: () async {
-                await save();
-                Navigator.of(context).pop();
-              },
-              icon: Icon(Icons.done),
-            ),
-        ].reversed.toList(),
-      ),
-      body: PageView(
-        controller: pageController,
-        children: [
-          Padding(
-            padding: EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 4),
-                  child: Text(
-                    DateFormat.yMd().add_Hms().format(record.state.created),
-                    style: TextStyle(fontWeight: FontWeight.bold),
+              IconButton(
+                onPressed: setPreview,
+                icon: Icon(
+                  Icons.remove_red_eye,
+                  color: !isEdit.value ? Theme.of(context).accentColor : null,
+                ),
+              )
+            ],
+          ),
+          centerTitle: true,
+          actions: [
+            if (isSaving.value)
+              Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: Center(
+                  child: Container(
+                    child: CircularProgressIndicator(),
+                    width: 20,
+                    height: 20,
                   ),
                 ),
-                Divider(),
-                Expanded(
-                  child: MarkdownEditor(
-                    controller: textTec,
-                    focusChange: (focused) {
-                      textFocus.value = focused;
+              )
+            else
+              IconButton(
+                onPressed: () async {
+                  await save();
+                  Navigator.of(context).pop();
+                },
+                icon: Icon(Icons.done),
+              ),
+          ].reversed.toList(),
+        ),
+        body: PageView(
+          controller: pageController,
+          children: [
+            Padding(
+              padding: EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 4),
+                    child: Text(
+                      DateFormat.yMd().add_Hms().format(record.state.created),
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Divider(),
+                  Expanded(
+                    child: MarkdownEditor(
+                      controller: textTec,
+                      focusChange: (focused) {
+                        textFocus.value = focused;
+                      },
+                    ),
+                  ),
+                  TagsInput(
+                    initial: record.state.tags,
+                    change: (tags) {
+                      if (ListEquality<String>().equals(tags, record.state.tags))
+                        return;
+
+                      record.state = record.state.copyWith(tags: tags);
+
+                      saveDebounce();
                     },
                   ),
-                ),
-                TagsInput(
-                  initial: record.state.tags,
-                  change: (tags) {
-                    if (ListEquality<String>().equals(tags, record.state.tags))
-                      return;
-
-                    record.state = record.state.copyWith(tags: tags);
-
-                    saveDebounce();
-                  },
-                ),
-                Divider(),
-                Toolbar(
-                  textFocused: textFocus.value,
-                  textTec: textTec,
-                ),
-              ],
-            ),
-          ),
-          Center(
-            child: SingleChildScrollView(
-              child: DiaryRecordCard(
-                record: record.state,
-                readonly: true,
+                  Divider(),
+                  Toolbar(
+                    textFocused: textFocus.value,
+                    textTec: textTec,
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+            Center(
+              child: SingleChildScrollView(
+                child: DiaryRecordCard(
+                  record: record.state,
+                  readonly: true,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

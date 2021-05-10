@@ -8,6 +8,7 @@ import 'package:dnew/widgets/loading.dart';
 import 'package:dnew/widgets/search_appbar.dart';
 import 'package:dnew/widgets/bottom.dart';
 import 'package:dnew/widgets/list.dart';
+import 'package:dnew/widgets/web_padding.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -50,40 +51,42 @@ class ListPage extends HookWidget {
       [],
     );
 
-    return Scaffold(
-      body: RefreshIndicator(
-        onRefresh: () async => pagingController.refresh(),
-        child: CustomScrollView(
-          slivers: [
-            SearchAppBar(searchQuery: searchQuery),
-            DiaryRecordList(controller: pagingController),
-          ],
+    return WebPadding(
+      child: Scaffold(
+        body: RefreshIndicator(
+          onRefresh: () async => pagingController.refresh(),
+          child: CustomScrollView(
+            slivers: [
+              SearchAppBar(searchQuery: searchQuery),
+              DiaryRecordList(controller: pagingController),
+            ],
+          ),
         ),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () async {
+            var loadingOverlay = showLoadingOverlay(context);
+
+            var record = DiaryRecord.blank(
+              userId: FirebaseAuth.instance.currentUser!.uid,
+            );
+            record = record.copyWith(
+              id: await context
+                  .read(diaryRecordControllerProvider.notifier)
+                  .create(record),
+            );
+            context.read(editableRecordProvider).state = record;
+
+            loadingOverlay.remove();
+
+            await Navigator.pushNamed(context, Routes.form);
+
+            pagingController.refresh();
+          },
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+        bottomNavigationBar: MyBottomNav(),
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () async {
-          var loadingOverlay = showLoadingOverlay(context);
-
-          var record = DiaryRecord.blank(
-            userId: FirebaseAuth.instance.currentUser!.uid,
-          );
-          record = record.copyWith(
-            id: await context
-                .read(diaryRecordControllerProvider.notifier)
-                .create(record),
-          );
-          context.read(editableRecordProvider).state = record;
-
-          loadingOverlay.remove();
-
-          await Navigator.pushNamed(context, Routes.form);
-
-          pagingController.refresh();
-        },
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-      bottomNavigationBar: MyBottomNav(),
     );
   }
 }
