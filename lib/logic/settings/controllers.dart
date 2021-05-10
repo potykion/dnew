@@ -39,8 +39,9 @@ var appSettingsControllerProvider =
   (ref) => AppSettingsController(),
 );
 
+var isDarkModeProvider =
+    Provider((ref) => ref.watch(appSettingsControllerProvider).isDarkMode);
+
 var themeModeProvider = Provider(
-  (ref) => ref.watch(appSettingsControllerProvider).isDarkMode
-      ? ThemeMode.dark
-      : ThemeMode.light,
+  (ref) => ref.watch(isDarkModeProvider) ? ThemeMode.dark : ThemeMode.light,
 );

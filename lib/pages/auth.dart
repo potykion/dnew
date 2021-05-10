@@ -1,12 +1,18 @@
+import 'package:dnew/logic/settings/controllers.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../routes.dart';
 
-class AuthPage extends StatelessWidget {
+class AuthPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
+    var isDarkMode = useProvider(isDarkModeProvider);
+
     return Scaffold(
         body: Center(
       child: Column(
@@ -14,9 +20,9 @@ class AuthPage extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         children: [
           Text("Надо бы войти"),
-          ElevatedButton.icon(
-            label: Text("Войти"),
-            icon: Image.asset('assets/g.png'),
+          SizedBox(height: 10),
+          SignInButton(
+            isDarkMode ? Buttons.GoogleDark : Buttons.Google,
             onPressed: () async {
               await signInByGoogle();
               Navigator.pushReplacementNamed(context, Routes.loading);

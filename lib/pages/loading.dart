@@ -40,7 +40,8 @@ class LoadingPage extends HookWidget {
               FirebaseCrashlytics.instance.recordFlutterError;
         }
 
-        var user = FirebaseAuth.instance.currentUser;
+        var user = FirebaseAuth.instance.currentUser ??
+            await FirebaseAuth.instance.authStateChanges().first;
         if (user?.isAnonymous ?? true) {
           await FirebaseAuth.instance.signOut();
           await Navigator.pushReplacementNamed(context, Routes.auth);
