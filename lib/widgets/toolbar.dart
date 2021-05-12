@@ -90,7 +90,7 @@ class Toolbar extends HookWidget {
     }
 
     return Container(
-      height: 40,
+      height: 30,
       child: toolbarState.value == ToolbarState.initial
           ? buildInitialToolbar()
           : MarkdownToolbar(

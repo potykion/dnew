@@ -90,17 +90,18 @@ class MarkdownToolbar extends HookWidget {
     var isSelectionActions = useState(false);
 
     // Если выделили текст, то показываем экшены для выделенного теста
+    setIsSelectionActions() {
+      if (controller.selection.baseOffset == -1) return;
+      var textSelected =
+          controller.selection.baseOffset != controller.selection.extentOffset;
+      isSelectionActions.value = textSelected;
+    }
+
     useEffect(
       () {
-        // ignore: prefer_function_declarations_over_variables
-        var listener = () {
-          if (controller.selection.baseOffset == -1) return;
-          var textSelected = controller.selection.baseOffset !=
-              controller.selection.extentOffset;
-          isSelectionActions.value = textSelected;
-        };
-        controller.addListener(listener);
-        return () => controller.removeListener(listener);
+        setIsSelectionActions();
+        controller.addListener(setIsSelectionActions);
+        return () => controller.removeListener(setIsSelectionActions);
       },
       [],
     );
