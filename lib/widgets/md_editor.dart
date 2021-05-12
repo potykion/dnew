@@ -10,18 +10,22 @@ class MarkdownEditor extends HookWidget {
   final TextEditingController controller;
 
   final Function(bool focused)? focusChange;
+  final bool requestFocus;
 
-  MarkdownEditor({
-    required this.controller,
-    this.focusChange,
-  });
+  MarkdownEditor(
+      {required this.controller, this.focusChange, this.requestFocus = false});
 
   @override
   Widget build(BuildContext context) {
     var focus = useFocusNode();
-    focus.addListener(() {
-      if (focusChange != null) focusChange!(focus.hasFocus);
-    });
+    useEffect(() {
+      focus.addListener(() {
+        if (focusChange != null) focusChange!(focus.hasFocus);
+      });
+      if (requestFocus) {
+        focus.requestFocus();
+      }
+    }, []);
 
     // Если прожали перевод строки и пред строка - элемент списка (- / - [ ] / - [x])
     // То прописываем новый элемент списка

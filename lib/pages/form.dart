@@ -160,18 +160,21 @@ class DiaryRecordFormPage extends HookWidget {
                             focusChange: (focused) {
                               textFocus.value = focused;
                             },
+                            requestFocus: textTec.text.isEmpty,
                           ),
-                          TagsInput(
-                            initial: record.state.tags,
-                            change: (tags) {
-                              if (ListEquality<String>()
-                                  .equals(tags, record.state.tags)) return;
+                          if (record.state.text.isNotEmpty)
+                            TagsInput(
+                              initial: record.state.tags,
+                              change: (tags) {
+                                if (ListEquality<String>()
+                                    .equals(tags, record.state.tags)) return;
 
-                              record.state = record.state.copyWith(tags: tags);
+                                record.state =
+                                    record.state.copyWith(tags: tags);
 
-                              saveDebounce();
-                            },
-                          ),
+                                saveDebounce();
+                              },
+                            ),
                         ],
                       ),
                     ),
