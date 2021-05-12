@@ -19,6 +19,7 @@ class DiaryRecordCard extends HookWidget {
   final bool showDate;
   final bool readonly;
   final void Function()? onEdit;
+  final void Function()? onLike;
 
   DiaryRecordCard({
     Key? key,
@@ -26,6 +27,7 @@ class DiaryRecordCard extends HookWidget {
     this.showDate = true,
     this.readonly = false,
     this.onEdit,
+    this.onLike,
   }) : super(key: key);
 
   @override
@@ -95,9 +97,12 @@ class DiaryRecordCard extends HookWidget {
               : Icon(Icons.favorite_border),
           onTap: readonly
               ? null
-              : () => context
-                  .read(diaryRecordControllerProvider.notifier)
-                  .toggleFavourite(record),
+              : () async {
+                  await context
+                      .read(diaryRecordControllerProvider.notifier)
+                      .toggleFavourite(record);
+                  if (onLike != null) onLike!();
+                },
         ),
       ],
     );

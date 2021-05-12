@@ -24,6 +24,7 @@ class DiaryRecordList extends StatelessWidget {
           itemBuilder: (context, item, index) => DiaryRecordCard(
             record: item,
             onEdit: controller.refresh,
+            onLike: controller.refresh,
           ),
         ),
       );
