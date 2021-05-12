@@ -153,24 +153,28 @@ class DiaryRecordFormPage extends HookWidget {
                   Expanded(
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 8),
-                      child: MarkdownEditor(
-                        controller: textTec,
-                        focusChange: (focused) {
-                          textFocus.value = focused;
-                        },
+                      child: ListView(
+                        children: [
+                          MarkdownEditor(
+                            controller: textTec,
+                            focusChange: (focused) {
+                              textFocus.value = focused;
+                            },
+                          ),
+                          TagsInput(
+                            initial: record.state.tags,
+                            change: (tags) {
+                              if (ListEquality<String>()
+                                  .equals(tags, record.state.tags)) return;
+
+                              record.state = record.state.copyWith(tags: tags);
+
+                              saveDebounce();
+                            },
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                  TagsInput(
-                    initial: record.state.tags,
-                    change: (tags) {
-                      if (ListEquality<String>().equals(tags, record.state.tags))
-                        return;
-
-                      record.state = record.state.copyWith(tags: tags);
-
-                      saveDebounce();
-                    },
                   ),
                   Divider(),
                   Toolbar(
