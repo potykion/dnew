@@ -70,6 +70,7 @@ class DiaryRecordFormPage extends HookWidget {
 
       saveDebounce();
     });
+
     var textFocus = useState(false);
 
     var isEdit = useState(true);
@@ -134,6 +135,7 @@ class DiaryRecordFormPage extends HookWidget {
         ),
         body: PageView(
           controller: pageController,
+          physics: NeverScrollableScrollPhysics(),
           children: [
             Padding(
               padding: EdgeInsets.all(12),
@@ -149,11 +151,14 @@ class DiaryRecordFormPage extends HookWidget {
                   ),
                   Divider(),
                   Expanded(
-                    child: MarkdownEditor(
-                      controller: textTec,
-                      focusChange: (focused) {
-                        textFocus.value = focused;
-                      },
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      child: MarkdownEditor(
+                        controller: textTec,
+                        focusChange: (focused) {
+                          textFocus.value = focused;
+                        },
+                      ),
                     ),
                   ),
                   TagsInput(

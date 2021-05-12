@@ -100,6 +100,7 @@ class MarkdownToolbar extends HookWidget {
           isSelectionActions.value = textSelected;
         };
         controller.addListener(listener);
+        return () => controller.removeListener(listener);
       },
       [],
     );
