@@ -29,6 +29,10 @@ class DiaryRecordController extends StateNotifier<List<DiaryRecord>> {
     return id;
   }
 
+  void resetState() {
+    state = [];
+  }
+
   Future<List<DiaryRecord>> getPage({int from = 0, int limit = 10}) async {
     late List<DiaryRecord> items;
 

@@ -54,7 +54,10 @@ class ListPage extends HookWidget {
     return WebPadding(
       child: Scaffold(
         body: RefreshIndicator(
-          onRefresh: () async => pagingController.refresh(),
+          onRefresh: () async {
+            context.read(diaryRecordControllerProvider.notifier).resetState();
+            pagingController.refresh();
+          },
           child: CustomScrollView(
             slivers: [
               SearchAppBar(searchQuery: searchQuery),
