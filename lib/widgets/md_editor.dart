@@ -30,16 +30,18 @@ class MarkdownEditor extends HookWidget {
     // Если прожали перевод строки и пред строка - элемент списка (- / - [ ] / - [x])
     // То прописываем новый элемент списка
     useValueChanged<String, void>(controller.text, (old, __) {
-      var newlineEntered =
-          "\n".allMatches(controller.text).length > "\n".allMatches(old).length;
-      if (newlineEntered) {
-        var newTextAndSelection =
-            tryContinueMarkdownList(controller.text, controller.selection);
-        if (newTextAndSelection != null) {
-          controller.text = newTextAndSelection.item1;
-          controller.selection = newTextAndSelection.item2;
+      WidgetsBinding.instance!.addPostFrameCallback((_) async {
+        var newlineEntered = "\n".allMatches(controller.text).length >
+            "\n".allMatches(old).length;
+        if (newlineEntered) {
+          var newTextAndSelection =
+              tryContinueMarkdownList(controller.text, controller.selection);
+          if (newTextAndSelection != null) {
+            controller.text = newTextAndSelection.item1;
+            controller.selection = newTextAndSelection.item2;
+          }
         }
-      }
+      });
     });
 
     return TextFormField(
