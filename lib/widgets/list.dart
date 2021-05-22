@@ -1,16 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dnew/logic/diary/controllers.dart';
-import 'package:dnew/logic/diary/db.dart';
 import 'package:dnew/logic/diary/models.dart';
+import 'package:dnew/logic/ads/models.dart';
+import 'package:dnew/widgets/ad_card.dart';
 import 'package:dnew/widgets/record.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class DiaryRecordList extends StatelessWidget {
-  final PagingController<int, DiaryRecord> controller;
+  final PagingController<int, dynamic> controller;
 
   const DiaryRecordList({
     Key? key,
@@ -18,14 +15,22 @@ class DiaryRecordList extends StatelessWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => PagedSliverList<int, DiaryRecord>(
+  Widget build(BuildContext context) => PagedSliverList<int, dynamic>(
         pagingController: controller,
-        builderDelegate: PagedChildBuilderDelegate<DiaryRecord>(
-          itemBuilder: (context, item, index) => DiaryRecordCard(
-            record: item,
-            onEdit: controller.refresh,
-            onLike: controller.refresh,
-          ),
+        builderDelegate: PagedChildBuilderDelegate<dynamic>(
+          itemBuilder: (context, dynamic item, index) {
+            if (item is DiaryRecord) {
+              return DiaryRecordCard(
+                record: item,
+                onEdit: controller.refresh,
+                onLike: controller.refresh,
+              );
+            } else if (item is AdMarker) {
+              return AdCard(adMarker: item);
+            } else {
+              throw "хз";
+            }
+          },
         ),
       );
 }
