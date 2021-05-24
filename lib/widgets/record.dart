@@ -114,6 +114,7 @@ class DiaryRecordCard extends HookWidget {
       children: [
         MarkdownBody(
           data: record.text,
+          // data: createParagraph(),
           onTapLink: (_, href, __) async {
             if (href != null) {
               await launch(href);
