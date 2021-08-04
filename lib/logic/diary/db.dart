@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:tuple/tuple.dart';
 
 import 'models.dart';
+import 'package:dnew/logic/core/utils/dt.dart';
 
 class FirebaseDiaryRecordRepo extends FirebaseRepo<DiaryRecord> {
   /// Фаерстор репо для привычек
@@ -37,6 +38,21 @@ class FirebaseDiaryRecordRepo extends FirebaseRepo<DiaryRecord> {
     if (fromCreated != null) {
       query = query.startAfter(<Timestamp>[Timestamp.fromDate(fromCreated)]);
     }
+
+    var docs = (await query.get()).docs;
+    return docs.map(entityFromFirebase).toList();
+  }
+
+  Future<List<DiaryRecord>> listByUserIdAndDate(
+      String userId, DateTime date) async {
+    var query = await collectionReference
+        .where("userId", isEqualTo: userId)
+        .orderBy("created", descending: true)
+        .where(
+          "created",
+          isGreaterThanOrEqualTo: date.date,
+          isLessThanOrEqualTo: date.endOfDay,
+        );
 
     var docs = (await query.get()).docs;
     return docs.map(entityFromFirebase).toList();

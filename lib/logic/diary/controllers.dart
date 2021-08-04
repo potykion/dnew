@@ -23,6 +23,10 @@ class DiaryRecordController extends StateNotifier<List<DiaryRecord>> {
     required this.userId,
   }) : super([]);
 
+  Future<void> getByDate(DateTime date) async {
+    state = await repo.listByUserIdAndDate(userId, date);
+  }
+
   Future<String> create(DiaryRecord record) async {
     var id = await repo.insert(record);
     state = [record.copyWith(id: id), ...state];

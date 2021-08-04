@@ -48,7 +48,9 @@ class LoadingPage extends HookWidget {
           return;
         }
 
-        await context.read(diaryRecordControllerProvider.notifier).getPage();
+        await context
+            .read(diaryRecordControllerProvider.notifier)
+            .getByDate(DateTime.now());
 
         var settings = context.read(appSettingsControllerProvider);
         if (settings.deleteBlank) {

@@ -51,7 +51,11 @@ int yearWeekNum(DateTime date) {
 /// @nodoc
 extension DateTimeUtils on DateTime {
   /// Создает дейт тайм без времени, то есть просто дейт
-  DateTime date() => DateTime(year, month, day);
+  DateTime get date => DateTime(year, month, day);
+
+  DateTime get startOfDay => DateTime(year, month, day);
+
+  DateTime get endOfDay => DateTime(year, month, day, 23, 59);
 
   /// Создает дейт тайм с фиксированной датой, то есть просто тайм
   DateTime time({bool withSeconds = false, DateTime? date}) => buildDateTime(
@@ -67,7 +71,7 @@ extension DateTimeUtils on DateTime {
       );
 
   /// Определяет, является ли дата сегодняшней
-  bool isToday() => date() == DateTime.now().date();
+  bool isToday() => date == DateTime.now().date;
 
   /// Форматирует дату в формате 2/3/2021
   String format() => DateFormat.yMd().format(this);
@@ -128,7 +132,7 @@ abstract class DateRange with _$DateRange {
       (dateTime.isBefore(to) || dateTime.isAtSameMomentAs(to));
 
   /// Дата дейт-ренжа
-  DateTime get date => from.date();
+  DateTime get date => from.date;
 
   /// Создает дейт-ренж из дейт-тайма, времени с, времени по
   /// Например, дейт-тайм - 2020-01-02 01:00,
